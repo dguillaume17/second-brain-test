@@ -1,0 +1,38 @@
+name: Deploy Docusaurus to GitHub Pages
+
+# 🔹 Ne se déclenche que sur la branche "prod"
+on:
+  push:
+    branches:
+      - prod  # <-- ici tu mets ta branche source
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Récupérer le code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installer Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 3️⃣ Installer les dépendances
+      - name: Install dependencies
+        run: npm ci
+
+      # 4️⃣ Générer le site Docusaurus
+      - name: Build Docusaurus site
+        run: npm run build
+
+      # 5️⃣ Déployer sur la branche gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: gh-pages
