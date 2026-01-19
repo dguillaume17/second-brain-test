@@ -2,6 +2,7 @@ name: Deploy Docusaurus to GitHub Pages
 
 # 🔹 Ne se déclenche que sur la branche "prod"
 on:
+  workflow_dispatch:
   push:
     branches:
       - prod  # <-- ici tu mets ta branche source
