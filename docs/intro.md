@@ -1,5 +1,5 @@
 ---
-id: coucou
+id: intro
 parent: test
 sidebar_position: 1
 ---

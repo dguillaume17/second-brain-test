@@ -2,9 +2,8 @@
 import React from 'react';
 import useGlobalData from '@docusaurus/useGlobalData';
 
-const DocsList: React.FC = () => {
-
-  const globalData = useGlobalData();
+export default function DocsList() {
+    const globalData = useGlobalData();
     const myData = globalData['my-metadata-plugin'].default.docs as Array<{filePath: string, frontMatter: Object}>;
 
     console.log('Données dans le navigateur :', myData);
@@ -23,6 +22,5 @@ const DocsList: React.FC = () => {
         </ul>
     </div>
   );
-};
+}
 
-export default DocsList;

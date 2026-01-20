@@ -90,16 +90,15 @@ const config: Config = {
         const docsDir = path.join(process.cwd(), 'docs'); // ton dossier docs
         const mdFiles = getAllMarkdownFiles(docsDir);
 
-        const docsData: DocData[] = mdFiles.map(relPath => {
-            const fullPath = path.join(docsDir, relPath);
+       const docsData: DocData[] = mdFiles
+        .map(relPath => {
+            const fullPath = path.resolve(docsDir, relPath);
             const raw = fs.readFileSync(fullPath, 'utf-8');
             const { data: frontMatter } = matter(raw);
-
-            return {
-            filePath: relPath,
-            frontMatter,
-            };
-        });
+            if (!frontMatter.id) return null; // skip files sans id
+            return { filePath: relPath, frontMatter };
+        })
+        .filter(Boolean) as DocData[];
 
         setGlobalData({ docs: docsData });
         },
