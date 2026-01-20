@@ -1,4 +1,6 @@
 ---
+id: coucou
+parent: test
 sidebar_position: 1
 ---
 

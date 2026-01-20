@@ -1,8 +1,29 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+const webpack = require('webpack'); // <--- Ajoutez cette ligne
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
+function getAllMarkdownFiles(dir: string, baseDir = dir): string[] {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...getAllMarkdownFiles(fullPath, baseDir));
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      // chemin relatif depuis docs
+      files.push(path.relative(baseDir, fullPath));
+    }
+  }
+
+  return files;
+}
 
 const config: Config = {
     plugins: [
@@ -15,6 +36,75 @@ const config: Config = {
       style: undefined,      // utiliser le style par défaut
     },
   ],
+  
+
+  function myPlugin(context, options) {
+      return {
+        name: 'docusaurus-extended-fallbacks',
+        configureWebpack(config, isServer, utils) {
+          return {
+            resolve: {
+              fallback: {
+                // Les nouveaux venus :
+                // "os": require.resolve("os-browserify/browser"),
+                // "crypto": require.resolve("crypto-browserify"),
+
+                // // --- Modules avec Polyfills ---
+                // "assert": require.resolve("assert/"),
+                // "constants": require.resolve("constants-browserify"),
+                // "tty": require.resolve("tty-browserify"),
+                // "vm": require.resolve("vm-browserify"),
+                // "path": require.resolve("path-browserify"), // déjà vu précédemment
+                // "stream": require.resolve("stream-browserify"),
+                // "buffer": require.resolve("buffer/"),
+                
+                // // --- Modules SANS Polyfills (On les désactive) ---
+                // // Ces modules sont liés au système et ne peuvent pas tourner dans Chrome/Firefox
+                // "async_hooks": false,
+                // "module": false,
+                // "v8": false,
+                // "perf_hooks": false,
+                // "readline": false,
+                // "fs": false,
+                // "net": false,
+                // "tls": false,
+                // "child_process": false,
+              },
+            },
+            plugins: [
+            //   new webpack.ProvidePlugin({
+            //     process: 'process/browser',
+            //     Buffer: ['buffer', 'Buffer'],
+            //   }),
+            ],
+          };
+        },
+      };
+    },
+    function myMetadataPlugin(context, options) {
+      return {
+        name: 'my-metadata-plugin',
+        async contentLoaded({ content, actions, ...rest }) {
+            const { setGlobalData } = actions;
+
+        const docsDir = path.join(process.cwd(), 'docs'); // ton dossier docs
+        const mdFiles = getAllMarkdownFiles(docsDir);
+
+        const docsData: DocData[] = mdFiles.map(relPath => {
+            const fullPath = path.join(docsDir, relPath);
+            const raw = fs.readFileSync(fullPath, 'utf-8');
+            const { data: frontMatter } = matter(raw);
+
+            return {
+            filePath: relPath,
+            frontMatter,
+            };
+        });
+
+        setGlobalData({ docs: docsData });
+        },
+      };
+    },
 ],
   title: 'My Site',
   tagline: 'Dinosaurs are cool',
@@ -57,6 +147,23 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            async sidebarItemsGenerator({defaultSidebarItemsGenerator, ...args}) {
+          const sidebarItems = await defaultSidebarItemsGenerator(args);
+          
+          // On parcourt les items pour leur injecter les métadonnées YAML
+          return sidebarItems.map((item) => {
+            if (item.type === 'doc') {
+              // On récupère le frontMatter du document et on le met dans customProps
+              return {
+                ...item,
+                customProps: {
+                  ...args.docs.find(d => d.id === item.id)?.frontMatter
+                },
+              };
+            }
+            return item;
+          });
+        },
         },
         blog: {
           showReadingTime: true,
