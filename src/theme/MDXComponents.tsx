@@ -14,57 +14,125 @@ export default {
         return <>{children}</>;
     }
 
-    const handleCopyOneLiner = async () => {
-      if (!containerRef.current) return;
-
+    // --- LOGIQUE COMMUNE : Extraction des fichiers ---
+    const getFiles = () => {
+      if (!containerRef.current) return [];
       const codeContainers = containerRef.current.querySelectorAll('[class*="codeBlockContainer"]');
       
-      const fileData = Array.from(codeContainers).map((container) => {
+      return Array.from(codeContainers).map((container) => {
         const titleElement = container.querySelector('[class*="codeBlockTitle"]');
         const codeElement = container.querySelector('pre');
         if (!titleElement || !codeElement) return null;
 
         return {
-          fileName: titleElement.textContent?.trim(),
-          base64Content: btoa(unescape(encodeURIComponent(codeElement.innerText)))
+          name: titleElement.textContent?.trim() || 'file.ts',
+          content: codeElement.innerText
         };
-      }).filter(item => item !== null);
+      }).filter(item => item !== null) as {name: string, content: string}[];
+    };
 
-      if (fileData.length === 0) return;
+    // --- BOUTON POWERSHELL (Existant) ---
+    const handleCopyPS = async () => {
+      const files = getFiles();
+      if (files.length === 0) return;
 
-      // 1. On prépare le dictionnaire de fichiers
-      const psDictionary = fileData.map(f => `"${f.fileName}"="${f.base64Content}"`).join('; ');
-      
-      // 2. Le script complet tel qu'il doit être exécuté par PowerShell
+      const psDictionary = files.map(f => `"${f.name}"="${btoa(unescape(encodeURIComponent(f.content)))}"`).join('; ');
       const rawScript = `$f=@{${psDictionary}}; $f.GetEnumerator() | % { $p=$_.Key; $d=Split-Path $p; if($d -and !(Test-Path $d)){mkdir $d -Force | Out-Null}; $bytes=[Convert]::FromBase64String($_.Value); [IO.File]::WriteAllBytes((Join-Path (Get-Location) $p), $bytes); Write-Host "✔ Créé : $p" -ForegroundColor Green }`;
-
-      // 3. Encodage en UTF-16LE pour PowerShell -EncodedCommand
+      
       const byteArray = new Uint8Array(new Uint16Array([...rawScript].map(c => c.charCodeAt(0))).buffer);
       let binary = '';
       byteArray.forEach(b => binary += String.fromCharCode(b));
-      const encodedScript = btoa(binary);
-
-      const finalCommand = `powershell -EncodedCommand ${encodedScript}`;
-
+      
       try {
-        await navigator.clipboard.writeText(finalCommand);
+        await navigator.clipboard.writeText(`powershell -EncodedCommand ${btoa(binary)}`);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error('Erreur :', err);
-      }
+      } catch (err) { console.error(err); }
     };
+
+    // --- NOUVEAU : BOUTON STACKBLITZ ---
+    const handleOpenStackBlitz = () => {
+    const files = getFiles();
+    if (files.length === 0) return;
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://stackblitz.com/run?view=preview';
+    form.target = '_blank';
+
+    const params: any = {
+        'project[title]': `Action : ${doc.metadata.title}`,
+        'project[description]': 'Généré depuis la documentation',
+        'project[template]': 'typescript'
+    };
+
+    // Ajouter tous les fichiers du MDX
+    files.forEach(file => {
+        params[`project[files][${file.name}]`] = file.content;
+    });
+
+    // Ajouter index.ts si nécessaire
+    if (!files.some(f => f.name === 'index.ts')) {
+        const firstFile = files[0].name.replace('.ts', '');
+        params['project[files][index.ts]'] = `import './${firstFile}';\nconsole.log('🚀 Exécution terminée');`;
+    }
+
+    // Ajouter un index.html minimal
+    params['project[files][index.html]'] = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>${doc.metadata.title}</title>
+    </head>
+    <body>
+    <script type="module" src="index.ts"></script>
+    </body>
+    </html>
+    `;
+
+  for (const key in params) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = params[key];
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+};
+
+
+
 
     return (
       <div className="custom-mdx-wrapper" ref={containerRef}>
-        <div style={{ marginBottom: '1.5rem', textAlign: 'right' }}>
+        <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'flex-end', 
+            marginBottom: '1.5rem',
+            flexWrap: 'wrap'
+        }}>
           <button 
-            onClick={handleCopyOneLiner}
-            className="button button--primary button--outline"
+            onClick={handleCopyPS}
+            className="button button--secondary button--sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
           >
-            {copied ? '✅ Commande prête !' : '⚡ Copier le One-Liner (Auto-création)'}
+            {copied ? '✅ Copié !' : '🟦 One-Liner PowerShell'}
+          </button>
+
+          <button 
+            onClick={handleOpenStackBlitz}
+            className="button button--primary button--sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '5px', backgroundColor: '#1389fd' }}
+          >
+            ⚡ Ouvrir dans StackBlitz
           </button>
         </div>
+
         {children}
       </div>
     );

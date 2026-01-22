@@ -10,7 +10,7 @@ export enum MyEnum {
 }
 ```
 
-```typescript title="main.ts"
+```typescript title="index.ts"
 import { MyEnum } from './enum';
 
 const a = MyEnum.Case1;
