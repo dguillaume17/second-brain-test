@@ -5,6 +5,7 @@ const webpack = require('webpack'); // <--- Ajoutez cette ligne
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import DocsList from './src/pages/docs-list';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -142,6 +143,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+        //   docRootComponent: require.resolve('./src/pages/docs-list.tsx'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
