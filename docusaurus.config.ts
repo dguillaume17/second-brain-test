@@ -33,6 +33,7 @@ const config: Config = {
     {
       indexDocs: true,       // indexer la doc
       indexPages: true,      // indexer les pages
+      indexBlog: false,
       language: "fr",        // langue
       style: undefined,      // utiliser le style par défaut
     },

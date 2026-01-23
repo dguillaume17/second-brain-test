@@ -6,7 +6,15 @@ export default {
   ...OriginalComponents,
 
   wrapper: function({ children }) {
-    const doc = useDoc();
+    let doc;
+    try {
+        // On tente de récupérer le contexte de la doc
+        doc = useDoc();
+    } catch (e) {
+        // Si on n'est pas dans une "Doc", on rend le contenu normalement sans les boutons
+        return <>{children}</>;
+    }
+
     const containerRef = useRef<HTMLDivElement>(null);
     const [copied, setCopied] = useState(false);
 
