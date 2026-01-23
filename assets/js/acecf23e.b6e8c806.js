@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunksecond_brain_test=globalThis.webpackChunksecond_brain_test||[]).push([[1903],{1912(s){s.exports=JSON.parse('{"blogBasePath":"/second-brain-test/blog","blogTitle":"Blog","authorsListPath":"/second-brain-test/blog/authors"}')}}]);
