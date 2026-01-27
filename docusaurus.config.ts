@@ -40,49 +40,6 @@ const config: Config = {
   ],
   
 
-  function myPlugin(context, options) {
-      return {
-        name: 'docusaurus-extended-fallbacks',
-        configureWebpack(config, isServer, utils) {
-          return {
-            resolve: {
-              fallback: {
-                // Les nouveaux venus :
-                // "os": require.resolve("os-browserify/browser"),
-                // "crypto": require.resolve("crypto-browserify"),
-
-                // // --- Modules avec Polyfills ---
-                // "assert": require.resolve("assert/"),
-                // "constants": require.resolve("constants-browserify"),
-                // "tty": require.resolve("tty-browserify"),
-                // "vm": require.resolve("vm-browserify"),
-                // "path": require.resolve("path-browserify"), // déjà vu précédemment
-                // "stream": require.resolve("stream-browserify"),
-                // "buffer": require.resolve("buffer/"),
-                
-                // // --- Modules SANS Polyfills (On les désactive) ---
-                // // Ces modules sont liés au système et ne peuvent pas tourner dans Chrome/Firefox
-                // "async_hooks": false,
-                // "module": false,
-                // "v8": false,
-                // "perf_hooks": false,
-                // "readline": false,
-                // "fs": false,
-                // "net": false,
-                // "tls": false,
-                // "child_process": false,
-              },
-            },
-            plugins: [
-            //   new webpack.ProvidePlugin({
-            //     process: 'process/browser',
-            //     Buffer: ['buffer', 'Buffer'],
-            //   }),
-            ],
-          };
-        },
-      };
-    },
     function myMetadataPlugin(context, options) {
       return {
         name: 'my-metadata-plugin',
