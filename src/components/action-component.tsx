@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { PowerShellUtils } from '../utils/power-shell.utils';
 import { StackBlitzUtils } from '../utils/stack-blitz.utils';
-import { CodeBlockItemExtractorUtils } from '../utils/code-block-item-extractor.utils';
+import { CodeBlockUtils } from '../utils/code-block.utils';
 
 export function ActionComponent({ title, children }: { title: string, children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -11,25 +11,25 @@ export function ActionComponent({ title, children }: { title: string, children: 
     if (!containerRef.current) return [];
     const codeContainers = containerRef.current.querySelectorAll('[class*="codeBlockContainer"]');
 
-    return CodeBlockItemExtractorUtils.extractCodeBlockItemsFrom(codeContainers);
+    return CodeBlockUtils.extractCodeBlockItemsFrom(codeContainers);
   };
 
   const handleCopyCommandLine = async () => {
-    const files = getCodeBlockItems();
+    const codeBlockItems = getCodeBlockItems();
 
     PowerShellUtils.copyCommandLine(
-      files,
+      codeBlockItems,
       () => setCopied(true),
       () => setCopied(false)
     );
   };
 
   const handleOpenStackBlitz = () => {
-    const files = getCodeBlockItems();
+    const codeBlockItems = getCodeBlockItems();
 
     StackBlitzUtils.openStackBlitz(
       title,
-      files
+      codeBlockItems
     );
   };
 

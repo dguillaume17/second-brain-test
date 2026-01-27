@@ -1,6 +1,6 @@
 import { CodeBlockItem } from "../models/code-block-item.model";
 
-export namespace CodeBlockItemExtractorUtils {
+export namespace CodeBlockUtils {
 
     export function extractCodeBlockItemsFrom(codeBlockItemContainers: NodeListOf<Element>): CodeBlockItem[] {
         return Array.from(codeBlockItemContainers).map((container) => {
@@ -8,10 +8,12 @@ export namespace CodeBlockItemExtractorUtils {
             const codeElement = container.querySelector('pre');
             if (!titleElement || !codeElement) return null;
 
-            return {
+            const codeBlockItem = new CodeBlockItem({
                 name: titleElement.textContent?.trim() || 'file.ts',
                 content: codeElement.innerText
-            };
-        }).filter(item => item !== null) as { name: string, content: string }[];
+            });
+
+            return codeBlockItem;
+        }).filter(item => item !== null);
     }
 }

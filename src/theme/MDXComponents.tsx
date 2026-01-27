@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import OriginalComponents from '@theme-original/MDXComponents';
 import { DocContextValue, useDoc } from '@docusaurus/plugin-content-docs/client';
 import useGlobalData from '@docusaurus/useGlobalData';
 import { NoteType } from '../enums/note-type.enum';
 import { ActionComponent } from '../components/action-component';
+import { CUSTOM_PLUGIN_NAME } from '../constants/constants';
+import { CUSTOM_PLUGIN_TYPE } from '../types/types';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -14,6 +16,20 @@ function overridenUseDoc(): DocContextValue {
   }
 }
 
+function HubComponent({ children }) {
+  const globalData = useGlobalData();
+
+    const customPluginData = globalData[CUSTOM_PLUGIN_NAME].default as CUSTOM_PLUGIN_TYPE;
+    const noteItems = customPluginData.noteItems;
+
+    console.log(noteItems);
+
+  return <>
+    <div>coucou</div>
+    <div>{children}</div>
+  </>;
+}
+
 function OtherComponent({ children }) {
   return <>{children}</>;
 }
@@ -22,11 +38,6 @@ export default {
   ...OriginalComponents,
 
   wrapper: function ({ children }) {
-    const globalData = useGlobalData();
-    const myData = globalData['my-metadata-plugin'].default.docs as Array<{ filePath: string, frontMatter: Object }>;
-
-    console.log(myData);
-
     const doc = overridenUseDoc();
     const slug = doc == null ? null : doc.metadata.slug;
 
@@ -34,7 +45,7 @@ export default {
 
     return NoteType.getAssociatedJsxElement(noteType, {
       [NoteType.Action]: () => (<ActionComponent title={doc.metadata.title}>{children}</ActionComponent>),
-      [NoteType.Hub]: () => (<OtherComponent>{children}</OtherComponent>),
+      [NoteType.Hub]: () => (<HubComponent>{children}</HubComponent>),
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Reference]: () => (<OtherComponent>{children}</OtherComponent>),
     });

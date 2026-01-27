@@ -1,30 +1,14 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-const webpack = require('webpack'); // <--- Ajoutez cette ligne
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-// import DocsList from './src/pages/docs-list';
+import { FileUtils } from './src/utils/file.utils';
+import { NoteItemUtils } from './src/utils/note.utils';
+import { CUSTOM_PLUGIN_NAME } from './src/constants/constants';
+import { CUSTOM_PLUGIN_TYPE } from './src/types/types';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-function getAllMarkdownFiles(dir: string, baseDir = dir): string[] {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files: string[] = [];
 
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...getAllMarkdownFiles(fullPath, baseDir));
-    } else if (entry.isFile() && entry.name.endsWith('.md')) {
-      // chemin relatif depuis docs
-      files.push(path.relative(baseDir, fullPath));
-    }
-  }
-
-  return files;
-}
 
 const config: Config = {
     plugins: [
@@ -42,24 +26,15 @@ const config: Config = {
 
     function myMetadataPlugin(context, options) {
       return {
-        name: 'my-metadata-plugin',
+        name: CUSTOM_PLUGIN_NAME,
         async contentLoaded({ content, actions, ...rest }) {
             const { setGlobalData } = actions;
 
-        const docsDir = path.join(process.cwd(), 'docs'); // ton dossier docs
-        const mdFiles = getAllMarkdownFiles(docsDir);
+        const docFolderPath = FileUtils.getDocFolderPath();
+        const markdownFilePathes = FileUtils.getAllMarkdownFilePathesFrom(docFolderPath);
+        const noteItems = NoteItemUtils.castMarkdownFilePathesAsNoteItems(markdownFilePathes);
 
-       const docsData: DocData[] = mdFiles
-        .map(relPath => {
-            const fullPath = path.resolve(docsDir, relPath);
-            const raw = fs.readFileSync(fullPath, 'utf-8');
-            const { data: frontMatter } = matter(raw);
-            if (!frontMatter.id) return null; // skip files sans id
-            return { filePath: relPath, frontMatter };
-        })
-        .filter(Boolean) as DocData[];
-
-        setGlobalData({ docs: docsData });
+        setGlobalData({ noteItems } as CUSTOM_PLUGIN_TYPE);
         },
       };
     },
