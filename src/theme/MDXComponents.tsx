@@ -5,7 +5,7 @@ import useGlobalData from '@docusaurus/useGlobalData';
 import { NoteType } from '../enums/note-type.enum';
 import { ActionComponent } from '../components/action-component';
 import { CUSTOM_PLUGIN_NAME } from '../constants/constants';
-import { CUSTOM_PLUGIN_TYPE } from '../types/types';
+import { CustomMetadata } from '../models/custom-metadata/custom-metadata.model';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -17,12 +17,13 @@ function overridenUseDoc(): DocContextValue {
 }
 
 function HubComponent({ children }) {
+  console.log('test');
+  
   const globalData = useGlobalData();
 
-    const customPluginData = globalData[CUSTOM_PLUGIN_NAME].default as CUSTOM_PLUGIN_TYPE;
-    const noteItems = customPluginData.noteItems;
+    const customPluginData = globalData[CUSTOM_PLUGIN_NAME].default as CustomMetadata;
 
-    console.log(noteItems);
+    console.log(customPluginData);
 
   return <>
     <div>coucou</div>

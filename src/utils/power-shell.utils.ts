@@ -1,9 +1,9 @@
-import { CodeBlockItem } from "../models/code-block-item.model";
+import { CodeBlock } from "../models/code-block.model";
 
 export namespace PowerShellUtils {
 
     export async function copyCommandLine(
-        codeBlockItems: CodeBlockItem[],
+        codeBlockItems: CodeBlock[],
         startFn: () => void,
         endFn: () => void
     ) {

@@ -1,10 +1,10 @@
-import { CodeBlockItem } from "../models/code-block-item.model";
+import { CodeBlock } from "../models/code-block.model";
 
 export namespace StackBlitzUtils {
 
     export function openStackBlitz(
         title: string,
-        codeBlockItems: CodeBlockItem[]
+        codeBlockItems: CodeBlock[]
     ) {
         if (codeBlockItems.length === 0) return;
 

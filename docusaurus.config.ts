@@ -1,44 +1,26 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import { FileUtils } from './src/utils/file.utils';
-import { NoteItemUtils } from './src/utils/note.utils';
-import { CUSTOM_PLUGIN_NAME } from './src/constants/constants';
-import { CUSTOM_PLUGIN_TYPE } from './src/types/types';
+import { CustomMetadataPlugin } from './src/plugins/custom-metadata.plugin';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-
+// TODO 2222
 
 const config: Config = {
-    plugins: [
-  [
-    require.resolve('@cmfcmf/docusaurus-search-local'),
-    {
-      indexDocs: true,       // indexer la doc
-      indexPages: true,      // indexer les pages
-      indexBlog: false,
-      language: "fr",        // langue
-      style: undefined,      // utiliser le style par défaut
-    },
+  plugins: [
+    [
+      require.resolve('@cmfcmf/docusaurus-search-local'),
+      {
+        indexDocs: true,       // indexer la doc
+        indexPages: true,      // indexer les pages
+        indexBlog: false,
+        language: "fr",        // langue
+        style: undefined,      // utiliser le style par défaut
+      },
+    ],
+    CustomMetadataPlugin
   ],
-  
-
-    function myMetadataPlugin(context, options) {
-      return {
-        name: CUSTOM_PLUGIN_NAME,
-        async contentLoaded({ content, actions, ...rest }) {
-            const { setGlobalData } = actions;
-
-        const docFolderPath = FileUtils.getDocFolderPath();
-        const markdownFilePathes = FileUtils.getAllMarkdownFilePathesFrom(docFolderPath);
-        const noteItems = NoteItemUtils.castMarkdownFilePathesAsNoteItems(markdownFilePathes);
-
-        setGlobalData({ noteItems } as CUSTOM_PLUGIN_TYPE);
-        },
-      };
-    },
-],
   title: 'My Site',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
@@ -76,28 +58,28 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-        //   docRootComponent: require.resolve('./src/pages/docs-list.tsx'),
+          //   docRootComponent: require.resolve('./src/pages/docs-list.tsx'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-            async sidebarItemsGenerator({defaultSidebarItemsGenerator, ...args}) {
-          const sidebarItems = await defaultSidebarItemsGenerator(args);
-          
-          // On parcourt les items pour leur injecter les métadonnées YAML
-          return sidebarItems.map((item) => {
-            if (item.type === 'doc') {
-              // On récupère le frontMatter du document et on le met dans customProps
-              return {
-                ...item,
-                customProps: {
-                  ...args.docs.find(d => d.id === item.id)?.frontMatter
-                },
-              };
-            }
-            return item;
-          });
-        },
+          async sidebarItemsGenerator({ defaultSidebarItemsGenerator, ...args }) {
+            const sidebarItems = await defaultSidebarItemsGenerator(args);
+
+            // On parcourt les items pour leur injecter les métadonnées YAML
+            return sidebarItems.map((item) => {
+              if (item.type === 'doc') {
+                // On récupère le frontMatter du document et on le met dans customProps
+                return {
+                  ...item,
+                  customProps: {
+                    ...args.docs.find(d => d.id === item.id)?.frontMatter
+                  },
+                };
+              }
+              return item;
+            });
+          },
         },
         blog: false,
         theme: {
