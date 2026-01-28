@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { JSX, useRef, useState } from 'react';
 import { PowerShellUtils } from '../utils/power-shell.utils';
 import { StackBlitzUtils } from '../utils/stack-blitz.utils';
 import { CodeBlockUtils } from '../utils/code-block.utils';
+import { ButtonComponent } from './button.component';
 
-export function ActionComponent({ title, children }: { title: string, children: React.ReactNode }) {
+export function ActionComponent({ title, children }: { title: string, children: React.ReactNode }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -42,21 +43,15 @@ export function ActionComponent({ title, children }: { title: string, children: 
         marginBottom: '1.5rem',
         flexWrap: 'wrap'
       }}>
-        <button
-          onClick={handleCopyCommandLine}
-          className="button button--secondary button--sm"
-          style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
-        >
-          {copied ? '✅ Copié !' : '🟦 One-Liner PowerShell'}
-        </button>
+        <ButtonComponent
+          title={copied ? '✅ Copié !' : '🟦 One-Liner PowerShell'}
+          onClick={handleCopyCommandLine}>
+        </ButtonComponent>
 
-        <button
-          onClick={handleOpenStackBlitz}
-          className="button button--primary button--sm"
-          style={{ display: 'flex', alignItems: 'center', gap: '5px', backgroundColor: '#1389fd' }}
-        >
-          ⚡ Ouvrir dans StackBlitz
-        </button>
+        <ButtonComponent
+          title="⚡ Ouvrir dans StackBlitz"
+          onClick={handleOpenStackBlitz}>
+        </ButtonComponent>
       </div>
 
       {children}
