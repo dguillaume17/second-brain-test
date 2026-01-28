@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { CustomRawDocMetadata } from '../models/custom-metadata/custom-raw-doc-metadata.model';
+import { NoteType } from '../enums/note-type.enum';
 
 export namespace MetadataUtils {
     export function castDocMetaDataAsCustomDocMetadata(docMetadata: DocMetadata): CustomDocMetadata {
@@ -17,6 +18,8 @@ export namespace MetadataUtils {
             fileContent,
             filePath,
             noteContent,
+            docMetadata.title,
+            NoteType.fromNullableSlug(docMetadata.slug),
             docMetadata.slug,
             new CustomRawDocMetadata(
                 frontMatter,
