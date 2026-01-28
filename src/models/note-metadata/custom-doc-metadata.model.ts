@@ -1,0 +1,109 @@
+
+import { ConceptLite } from "./base/concept-lite.model";
+import { ReferenceLite } from "./base/reference-lite.model";
+import { SnippetLite } from "./base/snippet-lite.model";
+import { Concept } from "./base/concept.model";
+import { Reference } from "./base/reference.model";
+import { Snippet } from "./base/snippet.model";
+import { NoteType } from "./../../enums/note-type.enum";
+import { NoteUtils } from "../../utils/note.utils";
+
+export class CustomDocMetadata {
+
+    // Getters
+
+    public get noteType(): NoteType {
+        return NoteType.fromNullableSlug(this.slug);
+    }
+
+    public get isConcept(): boolean {
+        return this.noteType === NoteType.Concept;
+    }
+
+    public get isReference(): boolean {
+        return this.noteType === NoteType.Reference;
+    }
+
+    public get isSnippet(): boolean {
+        return this.noteType === NoteType.Snippet;
+    }
+
+    // Constructor
+
+    constructor(
+        public readonly content: string,
+        public readonly path: string,
+        public readonly title: string,
+        public readonly slug: string,
+        public readonly frontMatter: {
+            readonly [key: string]: any;
+        }
+    ) {}
+
+    // Public work
+
+    public castToConceptLite(): ConceptLite {
+        if (!this.isConcept) { return null; }
+
+        return new ConceptLite(
+            this.slug,
+            this.title
+        );
+    }
+
+    public castToConcept(referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Concept {
+        if (!this.isConcept) { return null; }
+
+        const referenceSlugs = NoteUtils.extractSlugsFrom(this.content, NoteType.Reference);
+        const snippetSlugs = NoteUtils.extractSlugsFrom(this.content, NoteType.Snippet);
+
+        const referencesLite = referencesLiteDataset.filter(referenceLite => referenceSlugs.includes(referenceLite.slug));
+        const snippetsLite = snippetsLiteDataset.filter(snippetLite => snippetSlugs.includes(snippetLite.slug));
+
+        return new Concept(
+            this.slug,
+            this.title,
+            referencesLite,
+            snippetsLite
+        );
+    }
+
+    public castToReferenceLite(): ReferenceLite {
+        if (!this.isReference) { return null; }
+
+        return new ReferenceLite(
+            this.slug,
+            this.title
+        );
+    }
+
+    public castToReference(conceptsLiteDataset: ConceptLite[]): Reference {
+        if (!this.isReference) { return null; }
+
+        return new Reference(
+            this.slug,
+            this.title,
+            conceptsLiteDataset
+        );
+    }
+
+    public castToSnippetLite(): SnippetLite {
+        if (!this.isSnippet) { return null; }
+
+        return new SnippetLite(
+            this.slug,
+            this.title
+        );
+    }
+
+    public castToSnippet(conceptsLiteDataset: ConceptLite[]): Snippet {
+        if (!this.isSnippet) { return null; }
+
+        return new Snippet(
+            this.slug,
+            this.title,
+            conceptsLiteDataset
+        );
+    }
+
+}

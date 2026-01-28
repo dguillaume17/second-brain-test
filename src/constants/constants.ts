@@ -1,1 +1,1 @@
-export const CUSTOM_PLUGIN_NAME = 'my-plugin';
+export const NOTE_METADATA_PLUGIN_NAME = 'note-metadata-plugin';

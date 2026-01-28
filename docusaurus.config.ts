@@ -1,11 +1,11 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import { CustomMetadataPlugin } from './src/plugins/custom-metadata.plugin';
+import { NoteMetadataPlugin } from './src/plugins/note-metadata.plugin';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-// TODO 2222
+// TODO 22222222
 
 const config: Config = {
   plugins: [
@@ -19,7 +19,7 @@ const config: Config = {
         style: undefined,      // utiliser le style par défaut
       },
     ],
-    CustomMetadataPlugin
+    NoteMetadataPlugin
   ],
   title: 'My Site',
   tagline: 'Dinosaurs are cool',

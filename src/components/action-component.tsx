@@ -1,7 +1,7 @@
 import React, { JSX, useRef, useState } from 'react';
 import { PowerShellUtils } from '../utils/power-shell.utils';
 import { StackBlitzUtils } from '../utils/stack-blitz.utils';
-import { CodeBlockUtils } from '../utils/code-block.utils';
+import { NoteUtils } from '../utils/note.utils';
 import { ButtonComponent } from './button.component';
 
 export function ActionComponent({ title, children }: { title: string, children: React.ReactNode }): JSX.Element {
@@ -12,7 +12,7 @@ export function ActionComponent({ title, children }: { title: string, children: 
     if (!containerRef.current) return [];
     const codeContainers = containerRef.current.querySelectorAll('[class*="codeBlockContainer"]');
 
-    return CodeBlockUtils.extractCodeBlockItemsFrom(codeContainers);
+    return NoteUtils.extractCodeBlockItemsFrom(codeContainers);
   };
 
   const handleCopyCommandLine = async () => {

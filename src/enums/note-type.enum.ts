@@ -1,30 +1,43 @@
 import { JSX } from "react";
 
 export enum NoteType {
-    Action,
-    Hub,
+    Concept,
     Other,
-    Reference
+    Reference,
+    Snippet
 }
 
 export namespace NoteType {
     export function getAll(): NoteType[] {
         return [
-            NoteType.Action,
-            NoteType.Hub,
+            NoteType.Concept,
             NoteType.Other,
-            NoteType.Reference
+            NoteType.Reference,
+            NoteType.Snippet,
         ];
     }
 
-    export function getAssociatedSlug(type: NoteType): string | null {
+    export function getAssociatedSlugPrefix(type: NoteType): string | null {
         switch (type) {
-            case NoteType.Action:
-                return '/actions';
-            case NoteType.Hub:
-                return '/hub';
+            case NoteType.Concept:
+                return '/concepts';
             case NoteType.Reference:
-                return '/reference';
+                return '/references';
+            case NoteType.Snippet:
+                return '/snippets';
+            default:
+                return null;
+        }
+    }
+
+    export function getAssociatedFileNamePrefix(type: NoteType): string | null {
+        switch (type) {
+            case NoteType.Concept:
+                return 'c-';
+            case NoteType.Reference:
+                return 'r-';
+            case NoteType.Snippet:
+                return 's-';
             default:
                 return null;
         }
@@ -36,13 +49,13 @@ export namespace NoteType {
         }
 
         return getAll().find(type => {
-            const associatedSlug = getAssociatedSlug(type);
+            const associatedSlugPrefix = getAssociatedSlugPrefix(type);
 
-            if (associatedSlug == null) {
+            if (associatedSlugPrefix == null) {
                 return false;
             }
 
-            return slug.startsWith(associatedSlug);
+            return slug.startsWith(associatedSlugPrefix);
         }) ?? NoteType.Other;
     }
 

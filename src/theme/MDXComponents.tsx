@@ -4,8 +4,8 @@ import { DocContextValue, useDoc } from '@docusaurus/plugin-content-docs/client'
 import useGlobalData from '@docusaurus/useGlobalData';
 import { NoteType } from '../enums/note-type.enum';
 import { ActionComponent } from '../components/action-component';
-import { CUSTOM_PLUGIN_NAME } from '../constants/constants';
-import { CustomMetadata } from '../models/custom-metadata/custom-metadata.model';
+import { NOTE_METADATA_PLUGIN_NAME } from '../constants/constants';
+import { NoteLite } from '../models/note-metadata/base/note-lite.model';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -16,15 +16,7 @@ function overridenUseDoc(): DocContextValue {
   }
 }
 
-function HubComponent({ children }) {
-  console.log('test');
-  
-  const globalData = useGlobalData();
-
-    const customPluginData = globalData[CUSTOM_PLUGIN_NAME].default as CustomMetadata;
-
-    console.log(customPluginData);
-
+function SnippetComponent({ children }) {
   return <>
     <div>coucou</div>
     <div>{children}</div>
@@ -44,11 +36,17 @@ export default {
 
     const noteType = NoteType.fromNullableSlug(slug);
 
+    const globalData = useGlobalData();
+
+    const customPluginData = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteLite;
+
+    console.log(customPluginData);
+
     return NoteType.getAssociatedJsxElement(noteType, {
-      [NoteType.Action]: () => (<ActionComponent title={doc.metadata.title}>{children}</ActionComponent>),
-      [NoteType.Hub]: () => (<HubComponent>{children}</HubComponent>),
+      [NoteType.Concept]: () => (<ActionComponent title={doc.metadata.title}>{children}</ActionComponent>),
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Reference]: () => (<OtherComponent>{children}</OtherComponent>),
+      [NoteType.Snippet]: () => (<SnippetComponent>{children}</SnippetComponent>),
     });
   },
 };
