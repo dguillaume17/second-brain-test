@@ -77,13 +77,15 @@ export class CustomDocMetadata {
         );
     }
 
-    public castToReference(conceptsLiteDataset: ConceptLite[]): Reference {
+    public castToReference(conceptsDataset: Concept[]): Reference {
         if (!this.isReference) { return null; }
+
+        const concepts = conceptsDataset.filter(concept => concept.referencesLite.some(reference => reference.slug === this.slug));
 
         return new Reference(
             this.slug,
             this.title,
-            conceptsLiteDataset
+            concepts
         );
     }
 
@@ -96,13 +98,15 @@ export class CustomDocMetadata {
         );
     }
 
-    public castToSnippet(conceptsLiteDataset: ConceptLite[]): Snippet {
+    public castToSnippet(conceptsDataset: Concept[]): Snippet {
         if (!this.isSnippet) { return null; }
+
+        const concepts = conceptsDataset.filter(concept => concept.snippetsLite.some(snippet => snippet.slug === this.slug));
 
         return new Snippet(
             this.slug,
             this.title,
-            conceptsLiteDataset
+            concepts
         );
     }
 
