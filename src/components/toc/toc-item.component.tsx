@@ -23,7 +23,7 @@ export function TocItemComponent({tocItem}: {tocItem: TocItem}): JSX.Element {
 
     if (tocItem.ghostWikiLink != null) {
         return <>
-            <li>{tocItem.ghostWikiLink.content}</li>
+            <li>{tocItem.ghostWikiLink.displayableLabel}</li>
         </>;
     }
 

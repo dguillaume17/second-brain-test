@@ -16,7 +16,7 @@ title: "Git"
 	* Component
 		* [[Lifecycle]]
 		* [[Input]]
-		* [[Output]]
+		* [[Output|Hello World]]
 	* Directive
 		* [[r-git-definition]]
 * Vitest

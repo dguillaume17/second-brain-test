@@ -20,10 +20,10 @@ export class Slug {
         public readonly value: string
     ) {}
 
-    // Public work
+    // Static work
 
-    public isEqualToSlug(slug: Slug): boolean {
-        return this.value === slug.value;
+    public static isEqualToSlug(slugA: Slug, slugB: Slug): boolean {
+        return slugA.value === slugB.value;
     }
 
 }

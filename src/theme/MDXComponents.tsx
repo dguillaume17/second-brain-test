@@ -8,6 +8,9 @@ import { NOTE_METADATA_PLUGIN_NAME } from '../constants/constants';
 import { ConceptComponent } from '../components/concept-component';
 import { NoteDataset } from '../models/note-metadata/note-dataset.model';
 import { Slug } from '../models/slug.model';
+import { Concept } from '../models/note-metadata/base/concept.model';
+import { Snippet } from '../models/note-metadata/base/snippet.model';
+import { Reference } from '../models/note-metadata/base/reference.model';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -27,21 +30,21 @@ export default {
 
   wrapper: function ({ children }) {
     const doc = overridenUseDoc();
-    const slug = doc == null ? null : doc.metadata.slug;
-
-    const noteType = slug == null
-      ? NoteType.getDefaultNoteType()
-      : new Slug(slug).noteType;
-
     const globalData = useGlobalData();
 
-    const customPluginData = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteDataset;
-    console.log(customPluginData);
-    
-    const toc = customPluginData.concepts[1].toc;
+    const slug = doc == null ? null : new Slug(doc.metadata.slug);
+    const noteType = slug == null ? NoteType.getDefaultNoteType() : slug.noteType;
 
+    const noteDataset = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteDataset;
+  
     return NoteType.getAssociatedJsxElement(noteType, {
-      [NoteType.Concept]: () => (<ConceptComponent title={doc.metadata.title} toc={toc}>{children}</ConceptComponent>),
+      [NoteType.Concept]: () => {
+        const concept = slug == null ? null : NoteDataset.findConcept(noteDataset, slug);
+
+        return (
+          <ConceptComponent title={doc.metadata.title} toc={concept.toc}>{children}</ConceptComponent>
+        )
+      },
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Reference]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Snippet]: () => (<SnippetComponent title={doc.metadata.title}>{children}</SnippetComponent>),

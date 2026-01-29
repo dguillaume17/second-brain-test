@@ -7,14 +7,23 @@ export class WikiLink {
 
     // Public properties
 
-    public readonly content: string; // example value: "r-git"
+    public readonly path: string; // example value: "r-git"
+    public readonly title: string; // example value:
+        // undefined, if rawLink = "[[r-git]]"
+        // OR "Git", if rawLink = "[[r-git|Git]]"
+
+    public readonly displayableLabel: string;
 
     // Constructor
 
     constructor(
-        public readonly rawLink: string // example value: "[[r-git]]"
+        public readonly rawLink: string // example value: "[[r-git]]" ou "[[r-git|Git]]"
     ) {
-        this.content = WikiLink.getContentWithErrorHandling(rawLink);
+        const content = WikiLink.getContentWithErrorHandling(rawLink);
+
+        this.path = content.path;
+        this.title = content.title;
+        this.displayableLabel = this.title ?? this.path;
     }
 
     // Public work
@@ -23,8 +32,8 @@ export class WikiLink {
         const noteType = this._castToNoteType();
         const associatedSlugPrefix = NoteType.getAssociatedSlugPrefix(noteType);
         const slugValue = associatedSlugPrefix == null
-            ? this.content
-            : `${associatedSlugPrefix}/${this.content}`;
+            ? this.path
+            : `${associatedSlugPrefix}/${this.path}`;
 
         return new Slug(slugValue);
     }
@@ -39,14 +48,17 @@ export class WikiLink {
                 return false;
             }
 
-            return this.content.startsWith(associatedWikiLinkPrefix);
+            return this.path.startsWith(associatedWikiLinkPrefix);
         }) ?? NoteType.getDefaultNoteType();
     }
 
     // Static work
 
-    public static getContentWithErrorHandling(rawLink: string): string | null {
-        const matches = [...rawLink.matchAll(/\[\[(.*?)\]\]/g)];
+    public static getContentWithErrorHandling(rawLink: string): {
+        path: string,
+        title: string
+    } {
+        const matches = [...rawLink.matchAll(/\[\[(.*?)(?:\|(.*?))?\]\]/g)];
 
         if (matches.length === 0) {
             throw new WikiLinkNoMatchError(`WikiLink "${rawLink}" : Expected exactly one match, but none found`); // TODO error handling
@@ -56,14 +68,18 @@ export class WikiLink {
             throw new Error(`WikiLink "${rawLink}" : Expected exactly one match, but found ${matches.length}`); // TODO error handling
         }
         
-        const uniqueMatchLink = matches[0][1];
-        const formattedUniqueMatchLink = `[[${uniqueMatchLink}]]`;
+        const uniqueMatchPath = matches[0][1];
+        const uniqueMatchTitle = matches[0][2];
+        const uniqueMatchRawLink = `[[${uniqueMatchPath}${uniqueMatchTitle == null ? '' : '|' + uniqueMatchTitle}]]`;
 
-        if (formattedUniqueMatchLink != rawLink) {
-            throw new Error(`WikiLink "${rawLink}" : Content does not exactly match the expected format in strict mode: ${formattedUniqueMatchLink} <> ${rawLink}`); // TODO error handling
+        if (uniqueMatchRawLink != rawLink) {
+            throw new Error(`WikiLink "${rawLink}" : Content does not exactly match the expected format: ${uniqueMatchRawLink} <> ${rawLink}`); // TODO error handling
         }
 
-        return uniqueMatchLink;
+        return {
+            path: uniqueMatchPath,
+            title: uniqueMatchTitle
+        };
         
     }
 }

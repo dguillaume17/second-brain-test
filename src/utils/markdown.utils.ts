@@ -6,6 +6,7 @@ import { ReferenceLite } from '../models/note-metadata/base/reference-lite.model
 import { SnippetLite } from '../models/note-metadata/base/snippet-lite.model';
 import { NoteType } from '../enums/note-type.enum';
 import { WikiLink, WikiLinkNoMatchError } from '../models/wiki-link.model';
+import { Slug } from '../models/slug.model';
 
 export namespace MarkdownUtils {
 
@@ -71,7 +72,7 @@ export namespace MarkdownUtils {
                         const slug = wikiLink.castToSlug();
 
                         if (slug.noteType === NoteType.Reference) {
-                            tocReferenceLink = referencesLiteDataset.find(reference => reference.slug.isEqualToSlug(slug));
+                            tocReferenceLink = referencesLiteDataset.find(reference => Slug.isEqualToSlug(reference.slug, slug));
 
                             if (tocReferenceLink == null) {
                                 console.warn(`reference is null while slug is existing in TOC: ${slug.value}`); // TODO error handling
@@ -79,7 +80,7 @@ export namespace MarkdownUtils {
                         }
 
                         if (slug.noteType === NoteType.Snippet) {
-                            tocSnippetLink = snippetsLiteDataset.find(snippet => snippet.slug.isEqualToSlug(slug));
+                            tocSnippetLink = snippetsLiteDataset.find(snippet => Slug.isEqualToSlug(snippet.slug, slug));
 
                             if (tocSnippetLink == null) {
                                 console.warn(`snippet is null while slug is existing in TOC: ${slug.value}`); // TODO error handling
