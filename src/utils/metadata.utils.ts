@@ -11,12 +11,12 @@ export namespace MetadataUtils {
         const filePath = path.join(process.cwd(), relativeFilePath);
         const content = fs.readFileSync(filePath, 'utf-8');
 
-        const { data: frontMatter, content: noteContent } = matter(content);
+        const { data: frontMatter, content: markdownContent } = matter(content);
 
         const slug = new Slug(docMetadata.slug);
 
         return new CustomDocMetadata(
-            content,
+            markdownContent,
             filePath,
             docMetadata.title,
             slug,

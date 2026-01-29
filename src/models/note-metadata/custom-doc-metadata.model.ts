@@ -32,7 +32,7 @@ export class CustomDocMetadata {
     // Constructor
 
     constructor(
-        public readonly content: string,
+        public readonly markdownContent: string,
         public readonly path: string,
         public readonly title: string,
         public readonly slug: Slug,
@@ -47,7 +47,7 @@ export class CustomDocMetadata {
         if (!this.isConcept) { return null; }
 
         return new ConceptLite(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title
         );
@@ -56,14 +56,14 @@ export class CustomDocMetadata {
     public castToConcept(referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Concept {
         if (!this.isConcept) { return null; }
  
-        const toc =  MarkdownUtils.extractTocFrom(this.content, referencesLiteDataset, snippetsLiteDataset);
+        const toc =  MarkdownUtils.extractTocFrom(this.markdownContent, referencesLiteDataset, snippetsLiteDataset);
         const tocNestedChildren = toc.getNestedChildren();
 
         const referencesLite = tocNestedChildren.map(child => child.referenceLink).filter(referenceLink => referenceLink != null);
         const snippetsLite = tocNestedChildren.map(child => child.snippetLink).filter(snippetLink => snippetLink != null);
 
         return new Concept(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title,
             referencesLite,
@@ -76,7 +76,7 @@ export class CustomDocMetadata {
         if (!this.isReference) { return null; }
 
         return new ReferenceLite(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title
         );
@@ -88,7 +88,7 @@ export class CustomDocMetadata {
         const concepts = conceptsDataset.filter(concept => concept.flattenReferencesLite.some(reference => reference.slug === this.slug));
 
         return new Reference(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title,
             concepts
@@ -99,7 +99,7 @@ export class CustomDocMetadata {
         if (!this.isSnippet) { return null; }
 
         return new SnippetLite(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title
         );
@@ -111,7 +111,7 @@ export class CustomDocMetadata {
         const concepts = conceptsDataset.filter(concept => concept.flattenSnippetsLite.some(snippet => snippet.slug === this.slug));
 
         return new Snippet(
-            this.content,
+            this.markdownContent,
             this.slug,
             this.title,
             concepts

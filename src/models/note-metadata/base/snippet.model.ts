@@ -5,11 +5,11 @@ import { NoteLite } from "./note-lite.model";
 export class Snippet extends NoteLite {
 
     constructor(
-        content: string,
+        markdownContent: string,
         slug: Slug,
         title: string,
         public readonly conceptsLite: ConceptLite[]
     ) {
-        super(content, slug, title);
+        super(markdownContent, slug, title);
     }
 }

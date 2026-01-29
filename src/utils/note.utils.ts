@@ -1,19 +1,25 @@
 import { CodeBlock } from "../models/code-block.model";
 
 export namespace NoteUtils {
-
-    export function extractCodeBlockItemsFrom(codeBlockItemContainers: NodeListOf<Element>): CodeBlock[] {
-        return Array.from(codeBlockItemContainers).map((container) => {
-            const titleElement = container.querySelector('[class*="codeBlockTitle"]');
-            const codeElement = container.querySelector('pre');
-            if (!titleElement || !codeElement) return null;
-
-            const codeBlockItem = new CodeBlock(
-                codeElement.innerText,
-                titleElement.textContent?.trim() || 'file.ts'
-            );
-
-            return codeBlockItem;
-        }).filter(item => item !== null);
-    }
+    export function extractCodeBlockItemsFrom(markdownContent: string): CodeBlock[] {
+        const codeBlocks: CodeBlock[] = [];
+        
+        // Regex expliquée :
+        // ```(\w+)?            -> Capture le langage (ex: typescript)
+        // (?:\s+title="([^"]*)")? -> Capture optionnelle du titre entre guillemets
+        // \n([\s\S]*?)         -> Capture tout le contenu jusqu'aux prochains ```
+        // \n```                -> Fin du bloc
+        const regex = /```(\w+)?(?:\s+title="([^"]*)")?([\s\S]*?)```/g;
+        
+        let match;
+        while ((match = regex.exec(markdownContent)) !== null) {
+            codeBlocks.push(new CodeBlock(
+                match[3].trim(),
+                match[1] || null,
+                match[2]
+            ));
+        }
+        
+        return codeBlocks;
+        }
 }

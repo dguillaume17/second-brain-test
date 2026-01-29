@@ -21,12 +21,12 @@ export namespace StackBlitzUtils {
 
         // Ajouter tous les fichiers du MDX
         codeBlockItems.forEach(codeBlockItem => {
-            params[`project[files][${codeBlockItem.name}]`] = codeBlockItem.content;
+            params[`project[files][${codeBlockItem.title}]`] = codeBlockItem.code;
         });
 
         // Ajouter index.ts si nécessaire
-        if (!codeBlockItems.some(f => f.name === 'index.ts')) {
-            const firstFile = codeBlockItems[0].name.replace('.ts', '');
+        if (!codeBlockItems.some(f => f.title === 'index.ts')) {
+            const firstFile = codeBlockItems[0].title.replace('.ts', '');
             params['project[files][index.ts]'] = `import './${firstFile}';\nconsole.log('🚀 Exécution terminée');`;
         }
 

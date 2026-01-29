@@ -4,19 +4,14 @@ import { StackBlitzUtils } from '../utils/stack-blitz.utils';
 import { NoteUtils } from '../utils/note.utils';
 import { ButtonComponent } from './button.component';
 
-export function SnippetComponent({ title, noteContent, children }: { title: string, noteContent: string, children: React.ReactNode }): JSX.Element {
-  const containerRef = useRef<HTMLDivElement>(null);
+export function SnippetComponent({ title, markdownContent, children }: { title: string, markdownContent: string, children: React.ReactNode }): JSX.Element {
   const [copied, setCopied] = useState(false);
 
-  const getCodeBlockItems = () => {
-    if (!containerRef.current) return [];
-    const codeContainers = containerRef.current.querySelectorAll('[class*="codeBlockContainer"]');
-
-    return NoteUtils.extractCodeBlockItemsFrom(codeContainers);
-  };
-
   const handleCopyCommandLine = async () => {
-    const codeBlockItems = getCodeBlockItems();
+    const codeBlockItems = NoteUtils.extractCodeBlockItemsFrom(markdownContent);
+
+    console.log(codeBlockItems, markdownContent);
+    
 
     PowerShellUtils.copyCommandLine(
       codeBlockItems,
@@ -26,7 +21,7 @@ export function SnippetComponent({ title, noteContent, children }: { title: stri
   };
 
   const handleOpenStackBlitz = () => {
-    const codeBlockItems = getCodeBlockItems();
+    const codeBlockItems = NoteUtils.extractCodeBlockItemsFrom(markdownContent);
 
     StackBlitzUtils.openStackBlitz(
       title,
@@ -35,7 +30,7 @@ export function SnippetComponent({ title, noteContent, children }: { title: stri
   };
 
   return (
-    <div className="custom-mdx-wrapper" ref={containerRef}>
+    <div className="custom-mdx-wrapper">
       <div style={{
         display: 'flex',
         gap: '10px',
@@ -54,7 +49,7 @@ export function SnippetComponent({ title, noteContent, children }: { title: stri
         </ButtonComponent>
       </div>
 
-      {noteContent}
+markdownContent: {markdownContent}
 
       {children}
     </div>

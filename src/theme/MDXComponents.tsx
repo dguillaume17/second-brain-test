@@ -57,12 +57,9 @@ export default {
         }
 
         const snippet = NoteDataset.findSnippet(noteDataset, slug);
-
-        console.log(snippet, noteDataset);
-        
-
+  
         return (
-          <SnippetComponent title={doc.metadata.title} noteContent={snippet.content}>{children}</SnippetComponent>
+          <SnippetComponent title={doc.metadata.title} markdownContent={snippet.markdownContent}>{children}</SnippetComponent>
         );
       },
     });

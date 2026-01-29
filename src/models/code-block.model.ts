@@ -1,7 +1,8 @@
 export class CodeBlock {
 
     constructor(
-        public readonly content: string,
-        public readonly name: string
+        public readonly code: string,
+        public readonly langage: string,
+        public readonly title: string
     ) {}
 }

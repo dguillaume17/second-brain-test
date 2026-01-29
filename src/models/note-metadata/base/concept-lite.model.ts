@@ -4,10 +4,10 @@ import { NoteLite } from "./note-lite.model";
 export class ConceptLite extends NoteLite {
 
     constructor(
-        content: string,
+        markdownContent: string,
         slug: Slug,
         title: string
     ) {
-        super(content, slug, title);
+        super(markdownContent, slug, title);
     }
 }

@@ -5,11 +5,11 @@ import { ReferenceLite } from "./reference-lite.model";
 export class Reference extends ReferenceLite {
 
     constructor(
-        content: string,
+        markdownContent: string,
         slug: Slug,
         title: string,
         public readonly conceptsLite: ConceptLite[]
     ) {
-        super(content, slug, title);
+        super(markdownContent, slug, title);
     }
 }
