@@ -7,4 +7,15 @@ export class Toc {
     constructor(
         public readonly children: Array<TocItem>
     ) {}
+
+    // Public work
+
+    public getNestedChildren(): TocItem[] {
+        return this.children.flatMap(child => {
+            return [
+                child,
+                ...child.getNestedChildren()
+            ]
+        });
+    }
 }

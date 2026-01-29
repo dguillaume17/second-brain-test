@@ -5,6 +5,10 @@ import { TocHeading } from "./toc-heading.model";
 
 export class TocItem {
 
+    // Public properties
+
+    public readonly id = TocItem.getNextId();
+
     // Constructor
 
     constructor(
@@ -14,4 +18,27 @@ export class TocItem {
         public readonly snippetLink: SnippetLite | null,
         public readonly tocHeading: TocHeading,
     ) {}
+
+    // Public work
+
+    public getNestedChildren(): TocItem[] {
+        if (this.tocHeading == null) {
+            return [];
+        }
+
+        return this.tocHeading.children.flatMap(child => {
+            return [
+                child,
+                ...child.getNestedChildren()
+            ];
+        });
+    }
+
+    // Static work
+
+    private static _nextId = 0;
+
+    public static getNextId(): number {
+        return TocItem._nextId++;
+    }
 }

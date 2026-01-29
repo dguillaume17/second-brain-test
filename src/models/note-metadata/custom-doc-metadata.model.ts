@@ -6,7 +6,6 @@ import { Concept } from "./base/concept.model";
 import { Reference } from "./base/reference.model";
 import { Snippet } from "./base/snippet.model";
 import { NoteType } from "./../../enums/note-type.enum";
-import { NoteUtils } from "../../utils/note.utils";
 import { MarkdownUtils } from "../../utils/markdown.utils";
 import { Slug } from "../slug.model";
 
@@ -55,22 +54,12 @@ export class CustomDocMetadata {
 
     public castToConcept(referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Concept {
         if (!this.isConcept) { return null; }
-
-        const slugs = NoteUtils.extractSlugsFrom(this.content);
-
-        console.log(slugs);
-        
-        
-        const referenceSlugs = slugs.filter(slug => slug.noteType === NoteType.Reference);
-        const snippetSlugs = slugs.filter(slug => slug.noteType === NoteType.Snippet);
-
-        console.log(referenceSlugs, snippetSlugs);
-        
-
-        const referencesLite = referencesLiteDataset.filter(referenceLite => referenceSlugs.includes(referenceLite.slug));
-        const snippetsLite = snippetsLiteDataset.filter(snippetLite => snippetSlugs.includes(snippetLite.slug));
-
+ 
         const toc =  MarkdownUtils.extractTocFrom(this.content, referencesLiteDataset, snippetsLiteDataset);
+        const tocNestedChildren = toc.getNestedChildren();
+
+        const referencesLite = tocNestedChildren.map(child => child.referenceLink).filter(referenceLink => referenceLink != null);
+        const snippetsLite = tocNestedChildren.map(child => child.snippetLink).filter(snippetLink => snippetLink != null);
 
         return new Concept(
             this.slug,

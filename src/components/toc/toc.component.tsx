@@ -4,7 +4,6 @@ import { TocItemsComponent } from "./toc-items.component";
 
 export function TocComponent({toc}: {toc: Toc}): JSX.Element {
     return <>
-        TOC
         <TocItemsComponent tocItems={toc.children}></TocItemsComponent>
     </>;
 }

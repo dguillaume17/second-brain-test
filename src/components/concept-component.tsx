@@ -9,7 +9,6 @@ export function ConceptComponent({ title, toc, children }: { title: string, toc:
       title="test"
       onClick={() => alert('coucou')}>
     </ButtonComponent>
-    <div>Concept</div>
     <TocComponent toc={toc}></TocComponent>
   </>;
 }
