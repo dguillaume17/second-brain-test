@@ -129,6 +129,7 @@ export namespace MarkdownUtils {
             }
 
             return new TocItem(
+                level,
                 tocReferenceLink,
                 tocSnippetLink,
                 tocHeading,

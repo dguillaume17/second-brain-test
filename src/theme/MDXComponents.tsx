@@ -3,9 +3,10 @@ import OriginalComponents from '@theme-original/MDXComponents';
 import { DocContextValue, useDoc } from '@docusaurus/plugin-content-docs/client';
 import useGlobalData from '@docusaurus/useGlobalData';
 import { NoteType } from '../enums/note-type.enum';
-import { ActionComponent } from '../components/action-component';
+import { SnippetComponent } from '../components/snippet-component';
 import { NOTE_METADATA_PLUGIN_NAME } from '../constants/constants';
-import { NoteLite } from '../models/note-metadata/base/note-lite.model';
+import { ConceptComponent } from '../components/concept-component';
+import { NoteDataset } from '../models/note-metadata/note-dataset.model';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -14,13 +15,6 @@ function overridenUseDoc(): DocContextValue {
   } catch {
     return null;
   }
-}
-
-function SnippetComponent({ children }) {
-  return <>
-    <div>coucou</div>
-    <div>{children}</div>
-  </>;
 }
 
 function OtherComponent({ children }) {
@@ -38,15 +32,16 @@ export default {
 
     const globalData = useGlobalData();
 
-    const customPluginData = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteLite;
+    const customPluginData = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteDataset;
+    const toc = customPluginData.concepts[1].toc;
 
     console.log(customPluginData);
 
     return NoteType.getAssociatedJsxElement(noteType, {
-      [NoteType.Concept]: () => (<ActionComponent title={doc.metadata.title}>{children}</ActionComponent>),
+      [NoteType.Concept]: () => (<ConceptComponent title={doc.metadata.title} toc={toc}>{children}</ConceptComponent>),
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Reference]: () => (<OtherComponent>{children}</OtherComponent>),
-      [NoteType.Snippet]: () => (<SnippetComponent>{children}</SnippetComponent>),
+      [NoteType.Snippet]: () => (<SnippetComponent title={doc.metadata.title}>{children}</SnippetComponent>),
     });
   },
 };

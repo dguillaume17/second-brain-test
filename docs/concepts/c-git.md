@@ -18,8 +18,8 @@ title: "Git"
 		* [[Input]]
 		* [[Output]]
 	* Directive
-		* [[Injector]]
+		* [[r-git-definition]]
 * Vitest
-	* [[Test]]
+	* [[s-git-push]]
 	* [[s-typescript-use-enum]]
 * OK

@@ -1,0 +1,17 @@
+import React, { JSX } from 'react';
+import { ButtonComponent } from './button.component';
+import { Toc } from '../models/note-metadata/toc/toc.model';
+import { TocComponent } from './toc/toc.component';
+
+export function ConceptComponent({ title, toc, children }: { title: string, toc: Toc, children: React.ReactNode }): JSX.Element {
+  return <>
+    <ButtonComponent
+      title="test"
+      onClick={() => alert('coucou')}>
+    </ButtonComponent>
+    <div>Concept</div>
+    <TocComponent toc={toc}></TocComponent>
+  </>;
+}
+
+
