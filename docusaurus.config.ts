@@ -5,7 +5,7 @@ import { NoteMetadataPlugin } from './src/plugins/note-metadata.plugin';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-// TODO 222222
+// TODO 22222
 
 const config: Config = {
   plugins: [

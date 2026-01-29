@@ -21,4 +21,5 @@ title: "Git"
 		* [[Injector]]
 * Vitest
 	* [[Test]]
+	* [[s-typescript-use-enum]]
 * OK

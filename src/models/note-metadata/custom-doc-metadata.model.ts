@@ -61,7 +61,7 @@ export class CustomDocMetadata {
         const referencesLite = referencesLiteDataset.filter(referenceLite => referenceSlugs.includes(referenceLite.slug));
         const snippetsLite = snippetsLiteDataset.filter(snippetLite => snippetSlugs.includes(snippetLite.slug));
 
-        const toc =  MarkdownUtils.extractNodesFrom(this.content);
+        const toc =  MarkdownUtils.extractNodesFrom(this.content, referencesLiteDataset, snippetsLiteDataset);
 
         return new Concept(
             this.slug,
