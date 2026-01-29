@@ -3,15 +3,14 @@ import { PowerShellUtils } from '../utils/power-shell.utils';
 import { StackBlitzUtils } from '../utils/stack-blitz.utils';
 import { NoteUtils } from '../utils/note.utils';
 import { ButtonComponent } from './button.component';
+import { ConceptLite } from '../models/note-metadata/base/concept-lite.model';
+import { LinkedConceptsComponent } from './linked-concepts.components';
 
-export function SnippetComponent({ title, markdownContent, children }: { title: string, markdownContent: string, children: React.ReactNode }): JSX.Element {
+export function SnippetComponent({ title, markdownContent, concepts, children }: { title: string, markdownContent: string, concepts: ConceptLite[], children: React.ReactNode }): JSX.Element {
   const [copied, setCopied] = useState(false);
 
   const handleCopyCommandLine = async () => {
     const codeBlockItems = NoteUtils.extractCodeBlockItemsFrom(markdownContent);
-
-    console.log(codeBlockItems, markdownContent);
-    
 
     PowerShellUtils.copyCommandLine(
       codeBlockItems,
@@ -31,6 +30,7 @@ export function SnippetComponent({ title, markdownContent, children }: { title: 
 
   return (
     <div className="custom-mdx-wrapper">
+      <LinkedConceptsComponent concepts={concepts}></LinkedConceptsComponent>
       <div style={{
         display: 'flex',
         gap: '10px',
@@ -48,8 +48,6 @@ export function SnippetComponent({ title, markdownContent, children }: { title: 
           onClick={handleOpenStackBlitz}>
         </ButtonComponent>
       </div>
-
-markdownContent: {markdownContent}
 
       {children}
     </div>
