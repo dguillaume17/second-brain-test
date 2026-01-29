@@ -3,6 +3,7 @@ import { CustomDocMetadata } from '../models/note-metadata/custom-doc-metadata.m
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { Slug } from '../models/slug.model';
 
 export namespace MetadataUtils {
     export function castDocMetaDataAsCustomDocMetadata(docMetadata: DocMetadata): CustomDocMetadata {
@@ -12,11 +13,13 @@ export namespace MetadataUtils {
 
         const { data: frontMatter, content: noteContent } = matter(content);
 
+        const slug = new Slug(docMetadata.slug);
+
         return new CustomDocMetadata(
             content,
             filePath,
             docMetadata.title,
-            docMetadata.slug,
+            slug,
             frontMatter
         );
     }

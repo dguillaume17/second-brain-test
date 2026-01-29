@@ -22,13 +22,18 @@ export function TocItemsComponent({tocItems}: {tocItems: TocItem[]}): JSX.Elemen
                         : <></>
                 }
                 {
+                    child.ghostWikiLink != null
+                        ? <><p>Ghost Wiki Link : {child.ghostWikiLink.content}</p></>
+                        : <></>
+                }
+                {
                     child.referenceLink != null
-                        ? <>{child.referenceLink.title}</>
+                        ? <><p>Reference : {child.referenceLink.title}</p></>
                         : <></>
                 }
                 {
                     child.snippetLink != null
-                        ? <>{child.snippetLink.title}</>
+                        ? <><p>Snippet : {child.snippetLink.title}</p></>
                         : <></>
                 }
                 

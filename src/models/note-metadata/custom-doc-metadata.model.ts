@@ -8,13 +8,14 @@ import { Snippet } from "./base/snippet.model";
 import { NoteType } from "./../../enums/note-type.enum";
 import { NoteUtils } from "../../utils/note.utils";
 import { MarkdownUtils } from "../../utils/markdown.utils";
+import { Slug } from "../slug.model";
 
 export class CustomDocMetadata {
 
     // Getters
 
     public get noteType(): NoteType {
-        return NoteType.fromNullableSlug(this.slug);
+        return this.slug.noteType;
     }
 
     public get isConcept(): boolean {
@@ -35,7 +36,7 @@ export class CustomDocMetadata {
         public readonly content: string,
         public readonly path: string,
         public readonly title: string,
-        public readonly slug: string,
+        public readonly slug: Slug,
         public readonly frontMatter: {
             readonly [key: string]: any;
         }
@@ -55,13 +56,21 @@ export class CustomDocMetadata {
     public castToConcept(referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Concept {
         if (!this.isConcept) { return null; }
 
-        const referenceSlugs = NoteUtils.extractSlugsFrom(this.content, NoteType.Reference);
-        const snippetSlugs = NoteUtils.extractSlugsFrom(this.content, NoteType.Snippet);
+        const slugs = NoteUtils.extractSlugsFrom(this.content);
+
+        console.log(slugs);
+        
+        
+        const referenceSlugs = slugs.filter(slug => slug.noteType === NoteType.Reference);
+        const snippetSlugs = slugs.filter(slug => slug.noteType === NoteType.Snippet);
+
+        console.log(referenceSlugs, snippetSlugs);
+        
 
         const referencesLite = referencesLiteDataset.filter(referenceLite => referenceSlugs.includes(referenceLite.slug));
         const snippetsLite = snippetsLiteDataset.filter(snippetLite => snippetSlugs.includes(snippetLite.slug));
 
-        const toc =  MarkdownUtils.extractNodesFrom(this.content, referencesLiteDataset, snippetsLiteDataset);
+        const toc =  MarkdownUtils.extractTocFrom(this.content, referencesLiteDataset, snippetsLiteDataset);
 
         return new Concept(
             this.slug,
@@ -71,7 +80,7 @@ export class CustomDocMetadata {
             toc
         );
     }
-
+ 
     public castToReferenceLite(): ReferenceLite {
         if (!this.isReference) { return null; }
 

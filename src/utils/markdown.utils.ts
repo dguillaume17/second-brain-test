@@ -4,8 +4,8 @@ import { TocItem } from '../models/note-metadata/toc/toc-item.model';
 import { TocHeading } from '../models/note-metadata/toc/toc-heading.model';
 import { ReferenceLite } from '../models/note-metadata/base/reference-lite.model';
 import { SnippetLite } from '../models/note-metadata/base/snippet-lite.model';
-import { NoteUtils } from './note.utils';
 import { NoteType } from '../enums/note-type.enum';
+import { WikiLink, WikiLinkNoMatchError } from '../models/wiki-link.model';
 
 export namespace MarkdownUtils {
 
@@ -14,7 +14,7 @@ export namespace MarkdownUtils {
     const LIST_TYPE = 'list';
     const TEXT_TYPE = 'text';
 
-    export function extractNodesFrom(content: string, referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Toc {
+    export function extractTocFrom(content: string, referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Toc {
         const emptyTableOfContent = new Toc([]);
 
         const tokens = lexer(content);
@@ -24,7 +24,7 @@ export namespace MarkdownUtils {
         });
 
         if (tocHeadingTokenIndex === -1 || tocHeadingTokenIndex + 1 >= tokens.length) {
-            console.log('No TOC found');
+            console.warn('No TOC found'); // TODO error handling 
             return emptyTableOfContent;
         }
 
@@ -41,6 +41,7 @@ export namespace MarkdownUtils {
 
     function getTocItems(tokenList: Tokens.List, level: number, referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): TocItem[] {
         return tokenList.items.map(item => {
+            let tocGhostWikiLink: WikiLink;
             let tocReferenceLink: ReferenceLite;
             let tocSnippetLink: SnippetLite;
             let tocHeading: TocHeading;
@@ -50,37 +51,44 @@ export namespace MarkdownUtils {
                     const textToken = token as Tokens.Text;
                     const title = textToken.text;
 
-                    const referenceSlugExtraction = NoteUtils.extractUniqueSlugFrom(title, NoteType.Reference);
-                    if (referenceSlugExtraction.hasError) {
-                        console.warn(referenceSlugExtraction.errorMessage); // TODO error handling
+                    let wikiLink: WikiLink;
+
+                    try {
+                        wikiLink = new WikiLink(title);
+                    } catch (error) {
+                        if (error instanceof WikiLinkNoMatchError) {}
+                        else if (error instanceof Error) console.warn(`getTocItems(): ${error.message}`); // TODO error handling
+
+                        wikiLink = null;
                     }
 
-                    if (referenceSlugExtraction.hasSlug) {
-                        tocReferenceLink = referencesLiteDataset.find(reference => reference.slug === referenceSlugExtraction.slug);
-
-                        if (tocReferenceLink == null) {
-                            console.warn('toc reference is null while slug is existing'); // TODO error handling
-                        }
-                    }
-
-                    const snippetSlugExtraction = NoteUtils.extractUniqueSlugFrom(title, NoteType.Snippet);
-                     if (snippetSlugExtraction.hasError) {
-                        console.warn(snippetSlugExtraction.errorMessage); // TODO error handling
-                    }
-
-                    if (snippetSlugExtraction.hasSlug) {
-                        tocSnippetLink = snippetsLiteDataset.find(snippet => snippet.slug === snippetSlugExtraction.slug);
-
-                        if (tocSnippetLink == null) {
-                            console.warn('toc snippet is null while slug is existing'); // TODO error handling
-                        }
-                    }
-
-                    if (tocReferenceLink == null && tocSnippetLink == null) {
+                    if (wikiLink == null) {
                         tocHeading = new TocHeading(
                             title,
-                            tocHeading?.children
+                            tocHeading?.children ?? []
                         );
+                    } else {
+                        const slug = wikiLink.castToSlug();
+
+                        if (slug.noteType === NoteType.Reference) {
+                            tocReferenceLink = referencesLiteDataset.find(reference => reference.slug.isEqualToSlug(slug));
+
+                            if (tocReferenceLink == null) {
+                                console.warn(`reference is null while slug is existing in TOC: ${slug.value}`); // TODO error handling
+                            }
+                        }
+
+                        if (slug.noteType === NoteType.Snippet) {
+                            tocSnippetLink = snippetsLiteDataset.find(snippet => snippet.slug.isEqualToSlug(slug));
+
+                            if (tocSnippetLink == null) {
+                                console.warn(`snippet is null while slug is existing in TOC: ${slug.value}`); // TODO error handling
+                            }
+                        }
+
+                        if (tocReferenceLink == null && tocSnippetLink == null) {
+                            tocGhostWikiLink = wikiLink;
+                        }
                     }
                 }
 
@@ -96,16 +104,17 @@ export namespace MarkdownUtils {
                 
             });
 
-            const nullPropCount = (tocReferenceLink == null ? 1 : 0)
+            const nullPropCount = (tocGhostWikiLink == null ? 1 : 0)
+                + (tocReferenceLink == null ? 1 : 0)
                 + (tocSnippetLink == null ? 1 : 0)
                 + (tocHeading == null ? 1 : 0); 
 
-            if (nullPropCount === 3) {
+            if (nullPropCount === 4) {
                 console.warn('All TOC item properties are null'); // TODO error handling
                 return null;
             }
 
-            if (nullPropCount !== 2) {
+            if (nullPropCount !== 3) {
                 console.warn('Invalid TOC item: more than one property is set'); // TODO error handling
                 return null;
             }
@@ -129,6 +138,7 @@ export namespace MarkdownUtils {
             }
 
             return new TocItem(
+                tocGhostWikiLink,
                 level,
                 tocReferenceLink,
                 tocSnippetLink,

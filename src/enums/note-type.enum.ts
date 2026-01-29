@@ -17,6 +17,10 @@ export namespace NoteType {
         ];
     }
 
+    export function getDefaultNoteType(): NoteType {
+        return NoteType.Other;
+    }
+
     export function getAssociatedSlugPrefix(type: NoteType): string | null {
         switch (type) {
             case NoteType.Concept:
@@ -30,7 +34,7 @@ export namespace NoteType {
         }
     }
 
-    export function getAssociatedFileNamePrefix(type: NoteType): string | null {
+    export function getAssociatedWikiLinkPrefix(type: NoteType): string | null {
         switch (type) {
             case NoteType.Concept:
                 return 'c-';
@@ -41,22 +45,6 @@ export namespace NoteType {
             default:
                 return null;
         }
-    }
-
-    export function fromNullableSlug(slug: string | null): NoteType {
-        if (slug == null) {
-            return NoteType.Other;
-        }
-
-        return getAll().find(type => {
-            const associatedSlugPrefix = getAssociatedSlugPrefix(type);
-
-            if (associatedSlugPrefix == null) {
-                return false;
-            }
-
-            return slug.startsWith(associatedSlugPrefix);
-        }) ?? NoteType.Other;
     }
 
     export function getAssociatedJsxElement(type: NoteType, jsxElementFns: Record<NoteType, () => JSX.Element>): JSX.Element {

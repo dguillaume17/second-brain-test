@@ -1,5 +1,6 @@
-import { NoteType } from "../enums/note-type.enum";
 import { CodeBlock } from "../models/code-block.model";
+import { Slug } from "../models/slug.model";
+import { WikiLink } from "../models/wiki-link.model";
 
 export namespace NoteUtils {
 
@@ -18,65 +19,22 @@ export namespace NoteUtils {
         }).filter(item => item !== null);
     }
 
-    export function extractSlugsFrom(content: string, noteType: NoteType): string[] {
-       const matches = getExtractionSlugMatches(content, noteType);
-
-        return matches
-            .map(match => match[1])
-            .map(link => getSlugFrom(link, noteType));
-    }
-
-    export function extractUniqueSlugFrom(content: string, noteType: NoteType): {hasError: boolean, errorMessage: string | null, hasSlug: boolean, slug: string | null} {
-        const matches = getExtractionSlugMatches(content, noteType);
-
-        if (matches.length === 0) {
-            return {
-                hasError: false,
-                errorMessage: null,
-                hasSlug: false,
-                slug: null
-            };
-        }
-
-        if (matches.length != 1) {
-            return {
-                hasError: true,
-                errorMessage: `Expected exactly one match for strict mode, but found ${matches.length}`, // TODO error handling
-                hasSlug: false,
-                slug: null
-            };
-        }
-        
-        const uniqueMatchContent = matches[0][1];
-        const formattedUniqueMatchContent = `[[${uniqueMatchContent}]]`;
-
-        if (formattedUniqueMatchContent != content) {
-              return {
-                hasError: true,
-                errorMessage: `Content does not exactly match the expected format in strict mode: ${formattedUniqueMatchContent} <> ${content}`, // TODO error handling
-                hasSlug: false,
-                slug: null
-            };
-        }
-
-        return {
-            hasError: false,
-            errorMessage: null,
-            hasSlug: true,
-            slug: getSlugFrom(uniqueMatchContent, noteType)
-        }
-    }
-
-    function getExtractionSlugMatches(content: string, noteType: NoteType): RegExpExecArray[] {
-        const fileNamePrefix = NoteType.getAssociatedFileNamePrefix(noteType);
-        const regex = new RegExp(`\\[\\[(${fileNamePrefix}.*?)\\]\\]`, 'g');
+    export function extractSlugsFrom(content: string): Slug[] {
+        const regex = /(\[\[.*?\]\])/g;
 
         const matches = [...content.matchAll(regex)];
 
-        return matches;
-    }
-
-    function getSlugFrom(link: string, noteType: NoteType): string {
-        return NoteType.getAssociatedSlugPrefix(noteType) + '/' + link;
+        return matches
+            .map(match => match[1])
+            .map(rawLink => {
+                try {
+                    const wikiLink = new WikiLink(rawLink);
+                    return wikiLink.castToSlug();
+                } catch (error) {
+                    if (error instanceof Error) console.warn(`Unable to cast "${rawLink}" in WikiLink and Slug: ${error.message}`)
+                    return null;
+                }
+            })
+            .filter(slug => slug != null) ?? [];
     }
 }

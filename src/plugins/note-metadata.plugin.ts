@@ -20,13 +20,13 @@ export function NoteMetadataPlugin(context, options) {
 
             const customDocsMetadata = docs.map(doc => MetadataUtils.castDocMetaDataAsCustomDocMetadata(doc));
 
-            const conceptsLiteDataset = customDocsMetadata.map(doc => doc.castToConceptLite()).filter(note => !!note);
-            const referencesLiteDataset = customDocsMetadata.map(doc => doc.castToReferenceLite()).filter(note => !!note);
-            const snippetsLiteDataset = customDocsMetadata.map(doc => doc.castToSnippetLite()).filter(note => !!note);
-
-            const concepts = customDocsMetadata.map(doc => doc.castToConcept(referencesLiteDataset, snippetsLiteDataset)).filter(note => !!note);
-            const references = customDocsMetadata.map(doc => doc.castToReference(concepts)).filter(note => !!note);
-            const snippets = customDocsMetadata.map(doc => doc.castToSnippet(concepts)).filter(note => !!note); 
+            const conceptsLiteDataset = customDocsMetadata.map(doc => doc.castToConceptLite()).filter(note => note != null);
+            const referencesLiteDataset = customDocsMetadata.map(doc => doc.castToReferenceLite()).filter(note => note != null);
+            const snippetsLiteDataset = customDocsMetadata.map(doc => doc.castToSnippetLite()).filter(note => note != null);
+            
+            const concepts = customDocsMetadata.map(doc => doc.castToConcept(referencesLiteDataset, snippetsLiteDataset)).filter(note => note != null);
+            const references = customDocsMetadata.map(doc => doc.castToReference(concepts)).filter(note => note != null);
+            const snippets = customDocsMetadata.map(doc => doc.castToSnippet(concepts)).filter(note => note != null); 
 
             const noteDataset = new NoteDataset(
                 concepts,
