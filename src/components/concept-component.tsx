@@ -6,7 +6,7 @@ import { TocComponent } from './toc/toc.component';
 export function ConceptComponent({ title, toc, children }: { title: string, toc: Toc, children: React.ReactNode }): JSX.Element {
   return <>
     <ButtonComponent
-      title="test"
+      title={title}
       onClick={() => alert('coucou')}>
     </ButtonComponent>
     <TocComponent toc={toc}></TocComponent>

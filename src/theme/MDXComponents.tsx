@@ -57,9 +57,10 @@ export default {
         }
 
         const snippet = NoteDataset.findSnippet(noteDataset, slug);
+        const stackblitzTemplate = snippet.stackblitzTemplate;
 
         return (
-          <SnippetComponent title={doc.metadata.title} markdownContent={snippet.markdownContent} concepts={snippet.conceptsLite}>{children}</SnippetComponent>
+          <SnippetComponent title={doc.metadata.title} markdownContent={snippet.markdownContent} concepts={snippet.conceptsLite} stackblitzTemplate={stackblitzTemplate}>{children}</SnippetComponent>
         );
       },
     });

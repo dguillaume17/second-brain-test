@@ -1,5 +1,6 @@
 ---
 title: "TypeScript - Use enum"
+stackblitzTemplate: "typescript"
 ---
 
 ```typescript title="enum.ts"

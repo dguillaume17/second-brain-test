@@ -20,7 +20,7 @@ export namespace MetadataUtils {
             filePath,
             docMetadata.title,
             slug,
-            frontMatter
+            frontMatter as any
         );
     }
 }

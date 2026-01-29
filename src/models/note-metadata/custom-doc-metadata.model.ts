@@ -38,6 +38,7 @@ export class CustomDocMetadata {
         public readonly slug: Slug,
         public readonly frontMatter: {
             readonly [key: string]: any;
+            readonly stackblitzTemplate: string;
         }
     ) {}
 
@@ -114,7 +115,8 @@ export class CustomDocMetadata {
             this.markdownContent,
             this.slug,
             this.title,
-            concepts
+            concepts,
+            this.frontMatter.stackblitzTemplate
         );
     }
 

@@ -8,7 +8,8 @@ export class Snippet extends NoteLite {
         markdownContent: string,
         slug: Slug,
         title: string,
-        public readonly conceptsLite: ConceptLite[]
+        public readonly conceptsLite: ConceptLite[],
+        public readonly stackblitzTemplate: string | null
     ) {
         super(markdownContent, slug, title);
     }
