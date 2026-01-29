@@ -47,6 +47,7 @@ export class CustomDocMetadata {
         if (!this.isConcept) { return null; }
 
         return new ConceptLite(
+            this.content,
             this.slug,
             this.title
         );
@@ -62,6 +63,7 @@ export class CustomDocMetadata {
         const snippetsLite = tocNestedChildren.map(child => child.snippetLink).filter(snippetLink => snippetLink != null);
 
         return new Concept(
+            this.content,
             this.slug,
             this.title,
             referencesLite,
@@ -74,6 +76,7 @@ export class CustomDocMetadata {
         if (!this.isReference) { return null; }
 
         return new ReferenceLite(
+            this.content,
             this.slug,
             this.title
         );
@@ -85,6 +88,7 @@ export class CustomDocMetadata {
         const concepts = conceptsDataset.filter(concept => concept.flattenReferencesLite.some(reference => reference.slug === this.slug));
 
         return new Reference(
+            this.content,
             this.slug,
             this.title,
             concepts
@@ -95,6 +99,7 @@ export class CustomDocMetadata {
         if (!this.isSnippet) { return null; }
 
         return new SnippetLite(
+            this.content,
             this.slug,
             this.title
         );
@@ -106,6 +111,7 @@ export class CustomDocMetadata {
         const concepts = conceptsDataset.filter(concept => concept.flattenSnippetsLite.some(snippet => snippet.slug === this.slug));
 
         return new Snippet(
+            this.content,
             this.slug,
             this.title,
             concepts

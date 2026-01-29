@@ -4,7 +4,7 @@ import { StackBlitzUtils } from '../utils/stack-blitz.utils';
 import { NoteUtils } from '../utils/note.utils';
 import { ButtonComponent } from './button.component';
 
-export function SnippetComponent({ title, children }: { title: string, children: React.ReactNode }): JSX.Element {
+export function SnippetComponent({ title, noteContent, children }: { title: string, noteContent: string, children: React.ReactNode }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -53,6 +53,8 @@ export function SnippetComponent({ title, children }: { title: string, children:
           onClick={handleOpenStackBlitz}>
         </ButtonComponent>
       </div>
+
+      {noteContent}
 
       {children}
     </div>

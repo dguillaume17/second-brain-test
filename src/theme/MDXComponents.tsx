@@ -39,7 +39,11 @@ export default {
   
     return NoteType.getAssociatedJsxElement(noteType, {
       [NoteType.Concept]: () => {
-        const concept = slug == null ? null : NoteDataset.findConcept(noteDataset, slug);
+        if (slug == null) {
+          <OtherComponent>{children}</OtherComponent>
+        }
+
+        const concept = NoteDataset.findConcept(noteDataset, slug);
 
         return (
           <ConceptComponent title={doc.metadata.title} toc={concept.toc}>{children}</ConceptComponent>
@@ -47,7 +51,20 @@ export default {
       },
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
       [NoteType.Reference]: () => (<OtherComponent>{children}</OtherComponent>),
-      [NoteType.Snippet]: () => (<SnippetComponent title={doc.metadata.title}>{children}</SnippetComponent>),
+      [NoteType.Snippet]: () => {
+        if (slug == null) {
+          <OtherComponent>{children}</OtherComponent>
+        }
+
+        const snippet = NoteDataset.findSnippet(noteDataset, slug);
+
+        console.log(snippet, noteDataset);
+        
+
+        return (
+          <SnippetComponent title={doc.metadata.title} noteContent={snippet.content}>{children}</SnippetComponent>
+        );
+      },
     });
   },
 };

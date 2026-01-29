@@ -7,12 +7,13 @@ import { SnippetLite } from "./snippet-lite.model";
 export class Concept extends ConceptLite {
 
     constructor(
+        content: string,
         slug: Slug,
         title: string,
         public readonly flattenReferencesLite: ReferenceLite[],
         public readonly flattenSnippetsLite: SnippetLite[],
         public readonly toc: Toc
     ) {
-        super(slug, title);
+        super(content, slug, title);
     }
 }
