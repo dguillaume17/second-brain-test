@@ -21,8 +21,8 @@ const config: Config = {
     ],
     NoteMetadataPlugin
   ],
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'DevOps Second Brain',
+  tagline: '',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -62,7 +62,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/dguillaume17/second-brain-test/blob/prod/',
           async sidebarItemsGenerator({ defaultSidebarItemsGenerator, ...args }) {
             const sidebarItems = await defaultSidebarItemsGenerator(args);
 
@@ -96,7 +96,6 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'My Site',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -106,10 +105,10 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Second Brain',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/dguillaume17/second-brain-test/blob/prod',
           label: 'GitHub',
           position: 'right',
         },
