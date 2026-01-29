@@ -18,11 +18,23 @@ export namespace NoteUtils {
         }).filter(item => item !== null);
     }
 
-    export function extractSlugsFrom(noteContent: string, noteType: NoteType): string[] {
+    export function extractSlugsFrom(noteContent: string, noteType: NoteType, strictMode = false): string[] {
         const fileNamePrefix = NoteType.getAssociatedFileNamePrefix(noteType);
         const regex = new RegExp(`\\[\\[(${fileNamePrefix}.*?)\\]\\]`, 'g');
 
         const matches = [...noteContent.matchAll(regex)];
+
+        if (strictMode) {
+            if (matches.length != 1 ) {
+                return [];
+            }
+            
+            const uniqueMatchContent = matches[1][1];
+
+            if (uniqueMatchContent != noteContent) {
+                return [];
+            }
+        }
 
         return matches
             .map(match => match[1])

@@ -26,10 +26,7 @@ export function NoteMetadataPlugin(context, options) {
 
             const concepts = customDocsMetadata.map(doc => doc.castToConcept(referencesLiteDataset, snippetsLiteDataset)).filter(note => !!note);
             const references = customDocsMetadata.map(doc => doc.castToReference(concepts)).filter(note => !!note);
-            const snippets = customDocsMetadata.map(doc => doc.castToSnippet(concepts)).filter(note => !!note);
-
-            console.log(concepts);
-            
+            const snippets = customDocsMetadata.map(doc => doc.castToSnippet(concepts)).filter(note => !!note); 
 
             const noteDataset = new NoteDataset(
                 concepts,

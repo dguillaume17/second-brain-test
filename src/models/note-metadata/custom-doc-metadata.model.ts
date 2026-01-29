@@ -7,6 +7,7 @@ import { Reference } from "./base/reference.model";
 import { Snippet } from "./base/snippet.model";
 import { NoteType } from "./../../enums/note-type.enum";
 import { NoteUtils } from "../../utils/note.utils";
+import { MarkdownUtils } from "../../utils/markdown.utils";
 
 export class CustomDocMetadata {
 
@@ -60,11 +61,14 @@ export class CustomDocMetadata {
         const referencesLite = referencesLiteDataset.filter(referenceLite => referenceSlugs.includes(referenceLite.slug));
         const snippetsLite = snippetsLiteDataset.filter(snippetLite => snippetSlugs.includes(snippetLite.slug));
 
+        const toc =  MarkdownUtils.extractNodesFrom(this.content);
+
         return new Concept(
             this.slug,
             this.title,
             referencesLite,
-            snippetsLite
+            snippetsLite,
+            toc
         );
     }
 
@@ -80,7 +84,7 @@ export class CustomDocMetadata {
     public castToReference(conceptsDataset: Concept[]): Reference {
         if (!this.isReference) { return null; }
 
-        const concepts = conceptsDataset.filter(concept => concept.referencesLite.some(reference => reference.slug === this.slug));
+        const concepts = conceptsDataset.filter(concept => concept.flattenReferencesLite.some(reference => reference.slug === this.slug));
 
         return new Reference(
             this.slug,
@@ -101,7 +105,7 @@ export class CustomDocMetadata {
     public castToSnippet(conceptsDataset: Concept[]): Snippet {
         if (!this.isSnippet) { return null; }
 
-        const concepts = conceptsDataset.filter(concept => concept.snippetsLite.some(snippet => snippet.slug === this.slug));
+        const concepts = conceptsDataset.filter(concept => concept.flattenSnippetsLite.some(snippet => snippet.slug === this.slug));
 
         return new Snippet(
             this.slug,
