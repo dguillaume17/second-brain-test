@@ -15,7 +15,7 @@ export namespace MarkdownUtils {
     const LIST_TYPE = 'list';
     const TEXT_TYPE = 'text';
 
-    export function extractTocFrom(content: string, referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Toc {
+    export function extractTocFrom(slug: Slug, content: string, referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Toc {
         const emptyTableOfContent = new Toc([]);
 
         const tokens = lexer(content);
@@ -24,8 +24,18 @@ export namespace MarkdownUtils {
             return token.type === HEADING_TYPE && token.text === HEADING_TEXT;
         });
 
-        if (tocHeadingTokenIndex === -1 || tocHeadingTokenIndex + 1 >= tokens.length) {
-            console.warn('No TOC found'); // TODO error handling 
+        if (tocHeadingTokenIndex === -1) {
+            console.warn(`${slug.value}: No TOC found`); // TODO error handling 
+            return emptyTableOfContent;
+        }
+
+        if (tocHeadingTokenIndex + 1 >= tokens.length) {
+            console.warn(`${slug.value}: The TOC has no content`); // TODO error handling 
+            return emptyTableOfContent;
+        }
+
+        if (tocHeadingTokenIndex > 0) {
+            console.warn(`${slug.value}: The TOC is not the only content of the markdown`); // TODO error handling 
             return emptyTableOfContent;
         }
 

@@ -57,7 +57,7 @@ export class CustomDocMetadata {
     public castToConcept(referencesLiteDataset: ReferenceLite[], snippetsLiteDataset: SnippetLite[]): Concept {
         if (!this.isConcept) { return null; }
  
-        const toc =  MarkdownUtils.extractTocFrom(this.markdownContent, referencesLiteDataset, snippetsLiteDataset);
+        const toc =  MarkdownUtils.extractTocFrom(this.slug, this.markdownContent, referencesLiteDataset, snippetsLiteDataset);
         const tocNestedChildren = toc.getNestedChildren();
 
         const referencesLite = tocNestedChildren.map(child => child.referenceLink).filter(referenceLink => referenceLink != null);

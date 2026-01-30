@@ -8,9 +8,6 @@ import { NOTE_METADATA_PLUGIN_NAME } from '../constants/constants';
 import { ConceptComponent } from '../components/concept-component';
 import { NoteDataset } from '../models/note-metadata/note-dataset.model';
 import { Slug } from '../models/slug.model';
-import { Concept } from '../models/note-metadata/base/concept.model';
-import { Snippet } from '../models/note-metadata/base/snippet.model';
-import { Reference } from '../models/note-metadata/base/reference.model';
 
 function overridenUseDoc(): DocContextValue {
   try {
@@ -46,7 +43,7 @@ export default {
         const concept = NoteDataset.findConcept(noteDataset, slug);
 
         return (
-          <ConceptComponent title={doc.metadata.title} toc={concept.toc}>{children}</ConceptComponent>
+          <ConceptComponent title={doc.metadata.title} toc={concept.toc} markdownContent={concept.markdownContent}>{children}</ConceptComponent>
         )
       },
       [NoteType.Other]: () => (<OtherComponent>{children}</OtherComponent>),
