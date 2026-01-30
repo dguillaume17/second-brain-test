@@ -2,7 +2,15 @@ import { CodeBlock } from "../models/code-block.model";
 
 export namespace PowerShellUtils {
 
-    export async function copyCommandLine(
+    export async function copyCommandLineForFileCreation(filePath: string) {
+      const commandLine = `New-Item -Path "${filePath}" -ItemType "File" -Force`;
+
+      try {
+        await navigator.clipboard.writeText(commandLine);
+      } catch (err) { console.error(err); }
+    }
+
+    export async function copyCommandLineForCodeBlockFilesCreation(
         codeBlockItems: CodeBlock[],
         startFn: () => void,
         endFn: () => void

@@ -12,8 +12,8 @@ export class TocItem {
     // Constructor
 
     constructor(
-        public readonly ghostWikiLink: WikiLink | null,
         public readonly level: number,
+        public readonly ghostWikiLink: WikiLink | null,
         public readonly referenceLink: ReferenceLite | null,
         public readonly snippetLink: SnippetLite | null,
         public readonly tocHeading: TocHeading,

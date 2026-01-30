@@ -29,18 +29,34 @@ export class WikiLink {
     // Public work
 
     public castToSlug(): Slug {
-        const noteType = this._castToNoteType();
-        const associatedSlugPrefix = NoteType.getAssociatedSlugPrefix(noteType);
-        const slugValue = associatedSlugPrefix == null
-            ? this.path
-            : `${associatedSlugPrefix}/${this.path}`;
-
-        return new Slug(slugValue);
+        return WikiLink.castToSlug(this);
     }
 
     // Inner work
 
     private _castToNoteType(): NoteType {
+        return WikiLink.castToNoteType(this);
+    }
+
+    // Static work
+
+    public static getRelativeFileName(wikiLink: WikiLink): string {
+        const slugValue = WikiLink.castToSlug(wikiLink).value;
+
+        return `./docs${slugValue}.md`;
+    }
+
+    public static castToSlug(wikiLink: WikiLink): Slug {
+        const noteType = WikiLink.castToNoteType(wikiLink);
+        const associatedSlugPrefix = NoteType.getAssociatedSlugPrefix(noteType);
+        const slugValue = associatedSlugPrefix == null
+            ? wikiLink.path
+            : `${associatedSlugPrefix}/${wikiLink.path}`;
+
+        return new Slug(slugValue);
+    }
+
+    public static castToNoteType(wikiLink: WikiLink): NoteType {
         return NoteType.getAll().find(type => {
             const associatedWikiLinkPrefix = NoteType.getAssociatedWikiLinkPrefix(type);
 
@@ -48,11 +64,9 @@ export class WikiLink {
                 return false;
             }
 
-            return this.path.startsWith(associatedWikiLinkPrefix);
+            return wikiLink.path.startsWith(associatedWikiLinkPrefix);
         }) ?? NoteType.getDefaultNoteType();
     }
-
-    // Static work
 
     public static getContentWithErrorHandling(rawLink: string): {
         path: string,

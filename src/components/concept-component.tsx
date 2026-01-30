@@ -43,45 +43,21 @@ ${title}
   `;
 }
 
-function getPromptForUpdate(title: string, markdownContent: string): string {
+function getPromptForUpdate(title: string, markdownContent: string, customFeatures: string): string {
   return `
-Tu es expert DevOps et spécialiste de la technologie suivante : ${title}.  
+Tu es expert DevOps. Ton objectif est de m'aider à éditer un fichier markdown qui se trouve dans mon second cerveau.
 
 Je vais te fournir un TOC existant en Markdown. Ton objectif est :  
-1. Analyser le TOC et identifier tous les **sujets, concepts, commandes ou pratiques clés manquants** pour une utilisation complète de ${title} en entreprise.  
-2. Proposer une **version enrichie du TOC**, en Markdown, avec seulement des ajouts pour combler les manques identifiés. **Ne réorganise pas les sections existantes et ne supprime rien.**  
-3. Respecter toutes les contraintes suivantes :  
-   - Titre principal exactement : # TOC  
-   - Listes à puces uniquement avec des *  
-   - Premier niveau = difficulté :
-     * LOW — Bases essentielles
-     * MEDIUM — Travail en équipe
-     * HIGH — Usage avancé courant  
-   - Hiérarchie cohérente et profonde  
-   - Organisation par domaines fonctionnels DevOps  
-   - Le dernier niveau = uniquement des wikilinks  
-   - Chaque wikilink :
-     - Commence par r-
-     - Est en slug-case
-     - A un alias lisible après le |, décrivant l’action ou la notion, incluant la commande si applicable entre backticks
-     - Échapper tout chevron < avec \<  
-   - Pas de texte hors Markdown, pas de séparateurs comme ---  
-
-Tous les ajouts doivent être uniquement des éléments sous les sections existantes, pas de nouveaux regroupements ou niveaux.
-La version enrichie finale doit être fournie dans un seul bloc Markdown avec markdown au début et à la fin.
-Ne pas réorganiser, renommer ou supprimer quoi que ce soit dans le TOC existant.
-
-Tu dois me lister tous les changement en dehors du bloc de code qui tu as généré".
-
-Avant de répondre, tu dois :
-- Vérifier que toutes les contraintes sont respectées sans exception
-- Corriger automatiquement toute violation (format, hiérarchie, syntaxe, escaping, structure)
-- Refuser de répondre tant que la sortie ne respecte pas 100% des règles
+1. Lister les incohérences du TOC
+2. Lister les éléments que je devrais supprimer du TOC
+3. Les éléments que je devrais ajouter dans le TOC
 
 Voici le TOC existant à analyser :  
 ${markdownContent}
 
-Génère la version enrichie **dans un seul bloc Markdown**, en ajoutant uniquement les éléments manquants.
+${customFeatures != null && customFeatures !== '' ? `Effectue ton travail uniquement sur les points qui parlent de ceci : ${customFeatures}` : ''}
+
+Le sujet est le suivant: ${title}
 `;
 }
 
@@ -97,7 +73,8 @@ export function ConceptComponent({ title, toc, markdownContent, children }: { ti
     <ButtonComponent
       title="Mise à jour"
       onClick={() => {
-        navigator.clipboard.writeText(getPromptForUpdate(title, markdownContent));
+        const customFeatures = prompt('test');
+        navigator.clipboard.writeText(getPromptForUpdate(title, markdownContent, customFeatures));
         alert('Prompt copié');
       }}>
     </ButtonComponent>

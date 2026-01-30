@@ -14,7 +14,7 @@ sidebar_position: 1
         * Gestion plus robuste de stackblitz
         * Lister les snippets dans les références
     * MEDIUM
-        * Typer correctement les valeurs reçues par le plugin custom au sein des composants react
+        * Typer correctement les valeurs reçues par le plugin custom au sein des composants react (checker toutes les méthodes static des modèles)
         * Empêcher un concept d'avoir autre chose que la TOC
         * Gestion d'erreur plus fine + affichage dans une note dédiée
     * LOW

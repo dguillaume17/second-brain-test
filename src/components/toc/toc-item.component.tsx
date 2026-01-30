@@ -4,6 +4,20 @@ import { TocItemsComponent } from "./toc-items.component";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import { Slug } from "@site/src/models/slug.model";
 import Link from "@docusaurus/Link";
+import { ButtonComponent } from "../button.component";
+import { WikiLink } from "@site/src/models/wiki-link.model";
+import { PowerShellUtils } from "@site/src/utils/power-shell.utils";
+
+function getPromptForCreation(title: string): string {
+  return `
+Tu es expert DevOps. Ton objectif est de m'aider à rédiger un fichier markdown que je vais copier/coller dans mon second cerveau.
+
+Réponds moi uniquement le contenu du fichier markdown sans introduction ni conclusion.
+Ce contenu ne doit pas se trouver dans un bloc de code markdown afin de permettre aux éventuels blocs de code à l'intérieur de la note de s'afficher correctement.
+
+Le fichier markdown doit être une note de référence sur le sujet : ${title}.
+  `;
+}
 
 export function TocItemComponent({tocItem}: {tocItem: TocItem}): JSX.Element {
     const getUrlFromSlug = (slug: Slug) => useBaseUrl('docs' + slug.value);
@@ -22,8 +36,23 @@ export function TocItemComponent({tocItem}: {tocItem: TocItem}): JSX.Element {
     }
 
     if (tocItem.ghostWikiLink != null) {
+        const fileName = WikiLink.getRelativeFileName(tocItem.ghostWikiLink);
+        const label = tocItem.ghostWikiLink.displayableLabel;
+
         return <>
-            <li>{tocItem.ghostWikiLink.displayableLabel}</li>
+            <li>
+                {label}
+                <ButtonComponent
+                    title="Création"
+                    onClick={async () => {
+                        await PowerShellUtils.copyCommandLineForFileCreation(fileName);
+                        alert(`Nom de fichier copié: ${fileName}`);
+                        console.log('ok')
+                        await navigator.clipboard.writeText(getPromptForCreation(label));
+                        alert('Prompt copié');
+                    }}>
+                </ButtonComponent>
+            </li>
         </>;
     }
 

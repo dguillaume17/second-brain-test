@@ -13,7 +13,7 @@ export function SnippetComponent({ title, markdownContent, concepts, stackblitzT
   const codeBlockItems = NoteUtils.extractCodeBlockItemsFrom(markdownContent);
 
   const handleCopyCommandLine = () => {
-    PowerShellUtils.copyCommandLine(
+    PowerShellUtils.copyCommandLineForCodeBlockFilesCreation(
       codeBlockItems,
       () => setCopied(true),
       () => setCopied(false)

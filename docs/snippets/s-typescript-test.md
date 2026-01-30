@@ -1,5 +1,5 @@
 ---
-title: "TypeScript - Use enum"
+title: "Test Typescript"
 stackblitzTemplate: "typescript"
 ---
 
