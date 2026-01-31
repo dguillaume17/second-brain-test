@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import OriginalComponents from '@theme-original/MDXComponents';
 import { DocContextValue, useDoc } from '@docusaurus/plugin-content-docs/client';
 import useGlobalData from '@docusaurus/useGlobalData';
-import { NoteType } from '../enums/note-type.enum';
+import { NoteType } from '../plugins/domain/enums/note-type.enum';
 import { SnippetComponent } from '../components/snippet-component';
 import { NOTE_METADATA_PLUGIN_NAME } from '../constants/constants';
 import { ConceptComponent } from '../components/concept-component';
@@ -33,8 +33,11 @@ export default {
     const noteType = slug == null ? NoteType.getDefaultNoteType() : slug.noteType;
 
     const noteDataset = globalData[NOTE_METADATA_PLUGIN_NAME].default as NoteDataset;
+
+    console.log(noteDataset);
+    
   
-    return NoteType.getAssociatedJsxElement(noteType, {
+    return NoteType.executeFn<JSX.Element>(noteType, {
       [NoteType.Concept]: () => {
         if (slug == null) {
           <OtherComponent>{children}</OtherComponent>

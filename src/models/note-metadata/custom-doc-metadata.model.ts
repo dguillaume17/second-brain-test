@@ -5,9 +5,11 @@ import { SnippetLite } from "./base/snippet-lite.model";
 import { Concept } from "./base/concept.model";
 import { Reference } from "./base/reference.model";
 import { Snippet } from "./base/snippet.model";
-import { NoteType } from "./../../enums/note-type.enum";
+import { NoteType } from "../../plugins/domain/enums/note-type.enum";
 import { MarkdownUtils } from "../../utils/markdown.utils";
 import { Slug } from "../slug.model";
+import { MarkdownFrontMatter } from "@site/src/plugins/domain/models/markdown-front-matter.model";
+import { FilePath } from "../../plugins/domain/models/file-path.model";
 
 export class CustomDocMetadata {
 
@@ -32,14 +34,11 @@ export class CustomDocMetadata {
     // Constructor
 
     constructor(
+        public readonly filePath: FilePath,
         public readonly markdownContent: string,
-        public readonly path: string,
         public readonly title: string,
         public readonly slug: Slug,
-        public readonly frontMatter: {
-            readonly [key: string]: any;
-            readonly stackblitzTemplate: string;
-        }
+        public readonly frontMatter: MarkdownFrontMatter
     ) {}
 
     // Public work

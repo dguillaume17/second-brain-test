@@ -1,7 +1,10 @@
 import { NOTE_METADATA_PLUGIN_NAME } from "../constants/constants";
 import { NoteDataset } from "../models/note-metadata/note-dataset.model";
-import { MetadataUtils } from "../utils/metadata.utils";
 import { DocMetadata } from '@docusaurus/plugin-content-docs';
+import { NoteMetadataService } from "./domain/services/note-metadata.service";
+import { FileService } from "./domain/services/file.service";
+import { MarkdownService } from "./domain/services/markdown.service";
+import { LogService } from "./domain/services/log.service";
 
 export function NoteMetadataPlugin(context, options) {
     return {
@@ -16,9 +19,21 @@ export function NoteMetadataPlugin(context, options) {
                 return;
             }
 
+            const logService = new LogService();
+
+            const fileServive = new FileService();
+            const markdownService = new MarkdownService(logService);
+
+            const noteMetadataService = new NoteMetadataService(
+                fileServive,
+                markdownService
+            );
+
+
             const docs = docsPluginData.default.loadedVersions[0].docs as DocMetadata[];
 
-            const customDocsMetadata = docs.map(doc => MetadataUtils.castDocMetaDataAsCustomDocMetadata(doc));
+            const customDocsMetadata = noteMetadataService.createDomainModels(docs);
+            const testObject = noteMetadataService.createNoteDataset(docs);
 
             const conceptsLiteDataset = customDocsMetadata.map(doc => doc.castToConceptLite()).filter(note => note != null);
             const referencesLiteDataset = customDocsMetadata.map(doc => doc.castToReferenceLite()).filter(note => note != null);
@@ -31,8 +46,11 @@ export function NoteMetadataPlugin(context, options) {
             const noteDataset = new NoteDataset(
                 concepts,
                 references,
-                snippets
+                snippets,
+                testObject
             );
+
+            logService.printAllLogs();
 
             setGlobalData(noteDataset);
         },

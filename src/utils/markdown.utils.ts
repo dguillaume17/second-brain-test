@@ -4,7 +4,7 @@ import { TocItem } from '../models/note-metadata/toc/toc-item.model';
 import { TocHeading } from '../models/note-metadata/toc/toc-heading.model';
 import { ReferenceLite } from '../models/note-metadata/base/reference-lite.model';
 import { SnippetLite } from '../models/note-metadata/base/snippet-lite.model';
-import { NoteType } from '../enums/note-type.enum';
+import { NoteType } from '../plugins/domain/enums/note-type.enum';
 import { WikiLink, WikiLinkNoMatchError } from '../models/wiki-link.model';
 import { Slug } from '../models/slug.model';
 

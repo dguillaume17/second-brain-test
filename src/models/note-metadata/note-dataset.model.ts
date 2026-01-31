@@ -11,7 +11,8 @@ export class NoteDataset {
     constructor(
         public concepts: Concept[],
         public references: Reference[],
-        public snippets: Snippet[]
+        public snippets: Snippet[],
+        public readonly testObject: any
     ) {}
 
     // Static work
