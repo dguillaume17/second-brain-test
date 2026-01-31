@@ -1,6 +1,6 @@
 ---
-title: "Test Html"
 stackblitzTemplate: "javascript"
+title: "Test Html"
 ---
 
 ```html title="index.html"

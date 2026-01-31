@@ -2,11 +2,11 @@ import { TocItem } from "./../../models/note-metadata/toc/toc-item.model";
 import { JSX } from "react";
 import { TocItemsComponent } from "./toc-items.component";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import { Slug } from "@site/src/models/slug.model";
 import Link from "@docusaurus/Link";
 import { ButtonComponent } from "../button.component";
-import { WikiLink } from "@site/src/models/wiki-link.model";
 import { PowerShellUtils } from "@site/src/utils/power-shell.utils";
+import { Slug } from "../../models/slug.model";
+import { WikiLink } from "../../models/wiki-link.model";
 
 function getPromptForCreation(title: string): string {
   return `

@@ -1,5 +1,3 @@
-import { JSX } from "react";
-
 export enum NoteType {
     Concept,
     Other,
@@ -17,11 +15,15 @@ export namespace NoteType {
         ];
     }
 
+    export function executeFn<T>(type: NoteType, functions: Record<NoteType, () => T>): T {
+        return functions[type]?.();
+    }
+
     export function getDefaultNoteType(): NoteType {
         return NoteType.Other;
     }
 
-    export function getAssociatedSlugPrefix(type: NoteType): string | null {
+    export function getAssociatedSlugPrefix(type: NoteType): string | null { // TODO : remove
         switch (type) {
             case NoteType.Concept:
                 return '/concepts';
@@ -34,7 +36,26 @@ export namespace NoteType {
         }
     }
 
-    export function getAssociatedWikiLinkPrefix(type: NoteType): string | null {
+    export function getRelativeFilePathPrefix(type: NoteType): string | null {
+        const wikiLinkPrefix = getWikiLinkPrefix(type);
+
+        if (wikiLinkPrefix == null) {
+            return null;
+        }
+
+        switch (type) {
+            case NoteType.Concept:
+                return `docs/concepts/${wikiLinkPrefix}`;
+            case NoteType.Reference:
+                return `docs/references/${wikiLinkPrefix}`;
+            case NoteType.Snippet:
+                return `docs/snippets/${wikiLinkPrefix}`;
+            default:
+                return null;
+        }
+    }
+
+    export function getWikiLinkPrefix(type: NoteType): string | null {
         switch (type) {
             case NoteType.Concept:
                 return 'c-';
@@ -45,9 +66,5 @@ export namespace NoteType {
             default:
                 return null;
         }
-    }
-
-    export function getAssociatedJsxElement(type: NoteType, jsxElementFns: Record<NoteType, () => JSX.Element>): JSX.Element {
-        return jsxElementFns[type]();
     }
 }

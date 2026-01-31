@@ -1,4 +1,4 @@
-import { NoteType } from "../enums/note-type.enum";
+import { NoteType } from "../plugins/domain/enums/note-type.enum";
 import { Slug } from "./slug.model";
 
 export class WikiLinkNoMatchError extends Error {}
@@ -58,13 +58,13 @@ export class WikiLink {
 
     public static castToNoteType(wikiLink: WikiLink): NoteType {
         return NoteType.getAll().find(type => {
-            const associatedWikiLinkPrefix = NoteType.getAssociatedWikiLinkPrefix(type);
+            const wikiLinkPrefix = NoteType.getWikiLinkPrefix(type);
 
-            if (associatedWikiLinkPrefix == null) {
+            if (wikiLinkPrefix == null) {
                 return false;
             }
 
-            return wikiLink.path.startsWith(associatedWikiLinkPrefix);
+            return wikiLink.path.startsWith(wikiLinkPrefix);
         }) ?? NoteType.getDefaultNoteType();
     }
 
