@@ -149,8 +149,8 @@ export namespace MarkdownUtils {
             }
 
             return new TocItem(
-                tocGhostWikiLink,
                 level,
+                tocGhostWikiLink,
                 tocReferenceLink,
                 tocSnippetLink,
                 tocHeading,
